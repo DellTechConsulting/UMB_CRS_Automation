@@ -15,6 +15,8 @@
             password: "{{password}}"
         body_format: json 
       register: results_login
+      tags:
+        - always
  
     - name: Get the copy lock status
       uri:
@@ -35,15 +37,23 @@
   rescue:
   - debug:
       msg: "The job is still running and will keep reconnecting until the copy locked."
+    tags:
+      - get
       # Pause for 10 minutes to get the status.
   - pause:
       minutes: "{{pause_time}}"
+    tags:
+      - add 
   - include_tasks: copy_lock_status.yml
+    tags:
+      - add
 
 - name: printing policy id exist
   debug: 
     msg: copy locked successfully.
   when: policy_details.json.lockStatus == "Locked"
+  tags:
+   - get
 
 
 

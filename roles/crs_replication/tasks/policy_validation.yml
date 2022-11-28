@@ -14,9 +14,14 @@
       password: "{{password}}"
     body_format: json 
   register: results_login
+  tags:
+    - add
+  
 
 - debug:
     msg: "{{results_login}}"
+  tags:
+    - add
 
 - name: Get all CR Policy details
   uri:
@@ -32,11 +37,15 @@
     status_code: 200
     return_content: yes
   register: policy_details
+  tags:
+    - get
 
 - name: Fetching the policy names from the policy details 
   set_fact:
     policy_name_list: "{{policy_name_list + [item.policyName]}}"
   with_items: "{{ policy_details | json_query('json.items[*]')}}"
+  tags:
+    - get
 
 
 ## validating the passing policy name exist/not
@@ -44,6 +53,8 @@
 - name: printing policy name exist
   debug: 
     msg: "policy {{ policy_name}} exist"
+  tags:
+    - add
 
 - name: Failing the playbook scinc epolicy name  does not exist
   fail:
@@ -51,6 +62,8 @@
   when: item not in policy_name_list
   with_items:
     - "{{policy_name}}"
+  tags:
+    - add
 
 ## mapping the policy name with policy id 
 
@@ -61,9 +74,16 @@
     - item.policyName in policy_name
   with_items: 
     - "{{ policy_details | json_query('json.items[*]')}}"
+  tags:
+    - add
 
 - set_fact:
     id: "{{policy_id}}"
+  tags:
+    - add
 
 - debug:
     msg: "{{ id }}"
+  tags:
+    - add
+

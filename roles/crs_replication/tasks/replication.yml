@@ -18,9 +18,13 @@
   register: results_Createpolicy1
   with_items:
     - "{{id}}"
+  tags:
+    - create
 
 - debug: 
     msg: "{{results_Createpolicy1}}"
+  tags:
+    - create
 
 # - debug:
 #     msg: "{{results_Createpolicy1.results}}"
@@ -29,6 +33,9 @@
     jid: "{{jid}} + [ '{{ item.json.id }}' ]"
   with_items: 
     - "{{results_Createpolicy1.results}}"
-
+  tags:
+    - get
 - debug:
     msg: "{{jid}}"
+  tags:
+    - get
