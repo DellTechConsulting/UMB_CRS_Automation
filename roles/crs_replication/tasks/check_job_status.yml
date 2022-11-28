@@ -51,6 +51,3 @@
   - include_tasks: check_job_status.yml
     tags:
       - add
-
-
-

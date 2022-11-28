@@ -4,6 +4,7 @@
   gather_facts: no
   vars_files:
     - vars/variable.yml
+    # - vars/creds.yml
   tasks:
     # - include_role:
     #     name: crs_replication

@@ -5,53 +5,53 @@
     - add
     - get
 
-- name: creating the replication
-  include_tasks: replication.yml
-  tags:
-    - create
-    - get
+# - name: creating the replication
+#   include_tasks: replication.yml
+#   tags:
+#     - create
+#     - get
   
 
-- name: checking the status of the copy
-  include_tasks: check_job_status1.yml
-  vars:  
-    id1: "{{item.0}}"
-    jid1: "{{item.1}}"
-  with_together:
-    - "{{id}}"
-    - "{{jid}}"  
-  tags:
-    - always
-    - get
-    - add
+# - name: checking the status of the copy
+#   include_tasks: check_job_status1.yml
+#   vars:  
+#     id1: "{{item.0}}"
+#     jid1: "{{item.1}}"
+#   with_together:
+#     - "{{id}}"
+#     - "{{jid}}"  
+#   tags:
+#     - always
+#     - get
+#     - add
    
 
-- name:  validation of copy
-  include_tasks: copy_validation.yml
-  tags:
-    - always
-    - get
-    - add
+# - name:  validation of copy
+#   include_tasks: copy_validation.yml
+#   tags:
+#     - always
+#     - get
+#     - add
 
-- name: copy lock
-  include_tasks: copy_lock.yml
-  tags:
-    - lock
-    - get
-    - add
+# - name: copy lock
+#   include_tasks: copy_lock.yml
+#   tags:
+#     - lock
+#     - get
+#     - add
 
-- name: checking the status of the copy lock
-  include_tasks: copy_lock_status1.yml
-  vars:  
-    id1: "{{item.0}}"
-    cid1: "{{item.1}}"
-  with_together:
-    - "{{id}}"
-    - "{{cid}}" 
-  tags:
-    - always
-    - get
-    - add
+# - name: checking the status of the copy lock
+#   include_tasks: copy_lock_status1.yml
+#   vars:  
+#     id1: "{{item.0}}"
+#     cid1: "{{item.1}}"
+#   with_together:
+#     - "{{id}}"
+#     - "{{cid}}" 
+#   tags:
+#     - always
+#     - get
+#     - add
 
 
 
