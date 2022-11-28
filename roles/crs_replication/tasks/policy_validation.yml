@@ -1,0 +1,69 @@
+---
+## Login into CRS 
+- name: Get CRS API authentication token
+  uri:
+    validate_certs: no
+    url: "https://{{CR_static_IP}}/cr/v5/login"
+    method: POST
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    return_content: yes
+    body:
+      username: "{{username}}"
+      password: "{{password}}"
+    body_format: json 
+  register: results_login
+
+- debug:
+    msg: "{{results_login}}"
+
+- name: Get all CR Policy details
+  uri:
+    validate_certs: no
+    force_basic_auth: yes
+    url: https://{{CR_static_IP}}/cr/v5/policies
+    method: GET
+    headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+    body_format: json
+    status_code: 200
+    return_content: yes
+  register: policy_details
+
+- name: Fetching the policy names from the policy details 
+  set_fact:
+    policy_name_list: "{{policy_name_list + [item.policyName]}}"
+  with_items: "{{ policy_details | json_query('json.items[*]')}}"
+
+
+## validating the passing policy name exist/not
+
+- name: printing policy name exist
+  debug: 
+    msg: "policy {{ policy_name}} exist"
+
+- name: Failing the playbook scinc epolicy name  does not exist
+  fail:
+    msg: Failing the playbook scince {{item}} does not exist.
+  when: item not in policy_name_list
+  with_items:
+    - "{{policy_name}}"
+
+## mapping the policy name with policy id 
+
+- name: Map the policy name with policy id 
+  set_fact: 
+    policy_id: "{{policy_id + [item.id] | list}}"
+  when: 
+    - item.policyName in policy_name
+  with_items: 
+    - "{{ policy_details | json_query('json.items[*]')}}"
+
+- set_fact:
+    id: "{{policy_id}}"
+
+- debug:
+    msg: "{{ id }}"

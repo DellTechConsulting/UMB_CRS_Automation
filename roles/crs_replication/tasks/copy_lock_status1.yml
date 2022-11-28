@@ -1,0 +1,7 @@
+- debug: 
+    msg: "{{id1}}"
+
+- debug: 
+    msg: "{{cid1}}"
+
+- import_tasks: copy_lock_status.yml

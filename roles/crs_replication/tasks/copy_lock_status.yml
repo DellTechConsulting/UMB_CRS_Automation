@@ -1,0 +1,50 @@
+--- 
+- name: Check the status of the Job
+  block: 
+    - name: Get CRS API authentication token
+      uri:
+        validate_certs: no
+        url: "https://{{CR_static_IP}}/cr/v5/login"
+        method: POST
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+        return_content: yes
+        body:
+            username: "{{username}}"
+            password: "{{password}}"
+        body_format: json 
+      register: results_login
+ 
+    - name: Get the copy lock status
+      uri:
+        validate_certs: no
+        force_basic_auth: yes
+        url: https://{{CR_static_IP}}/cr/v5/policies/{{id1}}/copies/{{cid1}}   
+        method: GET
+        headers:
+              Content-Type: application/json
+              Accept: application/json
+              X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+        body_format: json
+        status_code: 200
+        return_content: yes
+      register: policy_details
+      failed_when: policy_details.json.lockStatus != "Locked"
+
+  rescue:
+  - debug:
+      msg: "The job is still running and will keep reconnecting until the copy locked."
+      # Pause for 10 minutes to get the status.
+  - pause:
+      minutes: "{{pause_time}}"
+  - include_tasks: copy_lock_status.yml
+
+- name: printing policy id exist
+  debug: 
+    msg: copy locked successfully.
+  when: policy_details.json.lockStatus == "Locked"
+
+
+
+

@@ -1,0 +1,15 @@
+- debug: 
+    msg: "{{id1}}"
+
+- debug: 
+    msg: "{{jid1}}"
+
+- set_fact:
+    job_status: ""
+
+- import_tasks: check_job_status.yml
+
+
+# - debug: 
+#     var: "{{job_status}}"
+  

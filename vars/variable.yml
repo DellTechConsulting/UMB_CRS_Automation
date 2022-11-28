@@ -1,0 +1,12 @@
+---
+CR_static_IP: '10.118.162.79:14777'
+username: desaia4
+password: $56Kasper%67
+pause_time: 10
+cid: []
+policy_name_list: []
+policy_id: []
+jid: []
+lock_status: []
+
+policy_name: ['CNWLinux1','CRS-RDC-LAB-NWSRV1','AVE','CRS_Test','CRS-RDC-LAB-NWSRV3','TEST_NEW']

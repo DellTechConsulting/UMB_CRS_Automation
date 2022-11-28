@@ -1,0 +1,32 @@
+--- 
+- name: Get the copy id 
+  uri:
+    validate_certs: no
+    force_basic_auth: yes
+    url: https://{{CR_static_IP}}/cr/v5/policies/{{item.0}}/jobs/{{item.1}}    
+    method: GET
+    headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+    body_format: json
+    status_code: 200
+    return_content: yes
+  register: copy_details
+  with_together:
+    - "{{id}}"
+    - "{{jid}}"
+    
+- name: validation of copy  
+  set_fact:
+    cid: "{{cid}} + [{{item.json.copyID}}]"
+  with_items:
+    - "{{copy_details.results}}"
+
+- debug:
+    msg: "{{cid}}"
+
+- name: printing copy status 
+  debug:
+    msg: "Copy has been successfully replicated with the copy id of copy id {{cid}}"
+ 

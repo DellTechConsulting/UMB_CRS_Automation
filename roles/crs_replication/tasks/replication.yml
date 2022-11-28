@@ -1,0 +1,34 @@
+---  
+- name: create replication of the Policy 
+  uri:
+    validate_certs: no
+    force_basic_auth: yes
+    url: https://{{CR_static_IP}}/cr/v5/actions/sync-copy
+    method: POST
+    headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+    body_format: json
+    status_code: 200
+    body:
+      {
+        "policyID": "{{item}}"
+      } 
+  register: results_Createpolicy1
+  with_items:
+    - "{{id}}"
+
+- debug: 
+    msg: "{{results_Createpolicy1}}"
+
+# - debug:
+#     msg: "{{results_Createpolicy1.results}}"
+
+- set_fact:
+    jid: "{{jid}} + [ '{{ item.json.id }}' ]"
+  with_items: 
+    - "{{results_Createpolicy1.results}}"
+
+- debug:
+    msg: "{{jid}}"

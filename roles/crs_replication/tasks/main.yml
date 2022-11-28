@@ -1,0 +1,34 @@
+---
+- name: login to CRS and validating the policy name
+  include_tasks: policy_validation.yml
+
+- name: creating the replication
+  include_tasks: replication.yml
+
+- name: checking the status of the copy
+  include_tasks: check_job_status1.yml
+  vars:  
+    id1: "{{item.0}}"
+    jid1: "{{item.1}}"
+  with_together:
+    - "{{id}}"
+    - "{{jid}}"   
+
+- name:  validation of copy
+  include_tasks: copy_validation.yml
+
+- name: copy lock
+  include_tasks: copy_lock.yml
+
+- name: checking the status of the copy lock
+  include_tasks: copy_lock_status1.yml
+  vars:  
+    id1: "{{item.0}}"
+    cid1: "{{item.1}}"
+  with_together:
+    - "{{id}}"
+    - "{{cid}}" 
+
+
+
+
