@@ -1,7 +1,7 @@
 ## UMB-CRS Automation
 ### Automate CRS Replication 
-# using Anisble roles executing the playbook 
-# under the roles we have these are the playbooks 
+#### using Anisble roles executing the crs replication playbook 
+#### These are the playbooks associated with the roles 
    1 Policy_validation.yml
    2 replication.yml
    3 check_job_status.yml
