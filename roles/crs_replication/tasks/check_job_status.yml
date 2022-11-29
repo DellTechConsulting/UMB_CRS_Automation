@@ -1,5 +1,5 @@
 --- 
-
+## Log in to Cr Lab and generate a new token because the old token expires every 50-60 seconds.
 - name: Check the status of the Job
   block: 
     - name: Get CRS API authentication token
@@ -18,7 +18,7 @@
       register: results_login
       tags:
         - create
- 
+## Check the job status by using the job id
     - name: Get the job id status
       uri:
         validate_certs: no
@@ -32,8 +32,8 @@
         body_format: json
         status_code: 200
         return_content: yes
-      register: policy_details
-      failed_when: policy_details.json.status != "Success"
+      register: job_id_status
+      failed_when: job_id_status.json.status != "Success"
       tags:
         - create
 
@@ -43,7 +43,7 @@
     tags:
       - create
     
-      # Pause for 10 minutes to get the status.
+# Pause for 10 minutes to get the job status.
   - pause:
       minutes: "{{pause_time}}"
     tags:

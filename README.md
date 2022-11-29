@@ -50,3 +50,12 @@ Task 1 -Get copy details using copy id and policy id
 ## check lock status.yml 
 In this task, we are keep on checking the job status untill the job get success. 
 Once its success , it display the success message. 
+
+
+## How to run in Tower
+
+The image below shows how to run the job template in ansible tower:
+<img src="images/TowerRun.png>
+   alt="Sample Tower Run"
+   style="align: left;"/>
+

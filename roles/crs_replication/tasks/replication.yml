@@ -1,4 +1,6 @@
 ---  
+
+## Creating a policy copy
 - name: create replication of the Policy 
   uri:
     validate_certs: no
@@ -15,24 +17,21 @@
       {
         "policyID": "{{item}}"
       } 
-  register: results_Createpolicy1
+  register: results_Createreplication
   with_items:
     - "{{id}}"
   tags:
     - create
 
 - debug: 
-    msg: "{{results_Createpolicy1}}"
+    msg: "{{results_Createreplication}}"
   tags:
     - create
-
-# - debug:
-#     msg: "{{results_Createpolicy1.results}}"
-
+## Obtaining the job id from the last result and stored in jid variable
 - set_fact:
     jid: "{{jid}} + [ '{{ item.json.id }}' ]"
   with_items: 
-    - "{{results_Createpolicy1.results}}"
+    - "{{results_Createreplication.results}}"
   tags:
     - create
 - debug:

@@ -1,4 +1,5 @@
 --- 
+## Log in to Cr Lab and generate a new token because the old token expires every 50-60 seconds.
 - name: Check the status of the Job
   block: 
     - name: Get CRS API authentication token
@@ -17,7 +18,7 @@
       register: results_login
       tags:
         - lock
- 
+## Obtaining the copy's status after the lock action
     - name: Get the copy lock status
       uri:
         validate_certs: no
@@ -31,15 +32,15 @@
         body_format: json
         status_code: 200
         return_content: yes
-      register: policy_details
-      failed_when: policy_details.json.lockStatus != "Locked"
+      register: copy_lock_status_details
+      failed_when: copy_lock_status_details.json.lockStatus != "Locked"
 
   rescue:
   - debug:
       msg: "The job is still running and will keep reconnecting until the copy locked."
     tags:
       - lock
-      # Pause for 10 minutes to get the status.
+  # Pause for 10 minutes to get the status.
   - pause:
       minutes: "{{pause_time}}"
     tags:
@@ -47,11 +48,43 @@
   - include_tasks: copy_lock_status.yml
     tags:
       - lock
+## validating the copy status, whether locked or unlocked
+- name: Get copy details
+  uri:
+    validate_certs: no
+    force_basic_auth: yes
+    url: https://{{CR_static_IP}}/cr/v5/policies/{{item.0}}/copies/{{item.1}}
+    method: GET
+    headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+    body_format: json
+    status_code: 200
+    return_content: yes
+  register: copy_lock_after_details
+  with_together:
+    - "{{id}}"
+    - "{{cid}}"
+  tags:
+    - lock
 
-- name: printing policy id exist
+- debug:
+    msg: "{{copy_lock_after_details}}"
+## obtaining the copy id when an action has been successfully completed.
+- name: Fetching the copy id  from the above result
+  set_fact:
+    copy_name: "{{copy_name + [item.copyname]}}"
+  with_items: "{{ copy_lock_after_details | json_query('json.items[*]')}}"
+  tags:
+    - lock
+- debug:
+    msg: "{{copy_name}}"
+## Printing the success message with the copy id
+- name: printing copy lock action status.
   debug: 
-    msg: copy locked successfully.
-  when: policy_details.json.lockStatus == "Locked"
+    msg:  Copies have been successfully with {{cid}}
+  when: copy_lock_after_details.json.lockStatus == "Locked"
   tags:
    - lock
 

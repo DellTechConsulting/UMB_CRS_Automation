@@ -1,5 +1,8 @@
 ---
+## CRS Server Details
 CR_static_IP: '10.118.162.79:14777'
+
+## Username and encrypted password for CRS serever
 username: desaia4
 password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -8,11 +11,25 @@ password: !vault |
           36656435653764336539363865356436363838346431623035386133346666353363303639316166
           6633323066326537650a356235333530633731646365336130653933313463396638393664363262
           3966
+<<<<<<< HEAD
+pause_time: 10   ##  Time in minutes
+
+## List of policy names required for replication
+policy_name: ['TEST_NEW']  
+
+## Action required for replication .[sync,sync-copy,securecopy,securecopyanalyze,copy,copy-lock]
+action: "sync-copy"
+=======
 # pause_time: 10   ##  Time in minutes
+>>>>>>> dfb769a3f0cfeaefb9e9c0f64575ba225ebe50da
 cid: []
 policy_name_list: []
 policy_id: []
 jid: []
 lock_status: []
+<<<<<<< HEAD
+copy_name: []
+=======
 # policy_name: ['TEST_NEW']
 # action: "sync-copy"
+>>>>>>> dfb769a3f0cfeaefb9e9c0f64575ba225ebe50da

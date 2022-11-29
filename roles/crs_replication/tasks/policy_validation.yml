@@ -1,6 +1,6 @@
 ---
 
-## Login into CRS 
+## Login into CRS lab
 - name: Get CRS API authentication token
   uri:
     validate_certs: no
@@ -17,13 +17,13 @@
   register: results_login
   tags:
     - add
-  
 
 - debug:
     msg: "{{results_login}}"
   tags:
     - add
 
+## Gathering all policy details available in the CR lab
 - name: Get all CR Policy details
   uri:
     validate_certs: no
@@ -41,6 +41,7 @@
   tags:
     - get
 
+## Obtaining the policy names from the policy_details
 - name: Fetching the policy names from the policy details 
   set_fact:
     policy_name_list: "{{policy_name_list + [item.policyName]}}"
@@ -49,7 +50,7 @@
     - get
 
 
-## validating the passing policy name exist/not
+## verifying whether or not the passing policy name 
 
 - name: printing policy name exist
   debug: 
@@ -66,7 +67,7 @@
   tags:
     - add
 
-## mapping the policy name with policy id 
+## Mapping the policy name with policy id 
 
 - name: Map the policy name with policy id 
   set_fact: 
