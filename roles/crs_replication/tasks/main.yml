@@ -42,6 +42,10 @@
     - "{{cid}}" 
   tags:
     - lock
+- name: copy lock
+  include_tasks: copy_lock_validation.yml
+  tags:
+    - lock
 
 
 

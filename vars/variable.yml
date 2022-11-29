@@ -23,6 +23,7 @@ policy_id: []
 jid: []
 lock_status: []
 copy_name: []
+copy_id: []
 # policy_name: ['TEST_NEW']
 # action: "sync-copy"
 

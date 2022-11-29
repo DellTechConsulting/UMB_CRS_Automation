@@ -72,18 +72,19 @@
 - debug:
     msg: "{{copy_lock_after_details}}"
 ## obtaining the copy id when an action has been successfully completed.
-- name: Fetching the copy id  from the above result
+- name: Fetching the copy name  from the above result
   set_fact:
-    copy_name: "{{copy_name + [item.copyname]}}"
-  with_items: "{{ copy_lock_after_details | json_query('json.items[*]')}}"
+    copy_id: "{{copy_id}} + [ '{{ item.json.id }}' ]"
+  with_items: 
+    - "{{ copy_lock_after_details.results}}"
   tags:
     - lock
 - debug:
-    msg: "{{copy_name}}"
+    msg: "{{copy_id}}"
 ## Printing the success message with the copy id
 - name: printing copy lock action status.
   debug: 
-    msg:  Copies have been successfully with {{copy_name}}
+    msg:  Copies have been successfully with {{copy_id}}
   when: item.json.lockStatus == "Locked"
   with_items: 
     "{{ copy_lock_after_details.results}}"
