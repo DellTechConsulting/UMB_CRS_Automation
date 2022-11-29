@@ -83,8 +83,10 @@
 ## Printing the success message with the copy id
 - name: printing copy lock action status.
   debug: 
-    msg:  Copies have been successfully with {{cid}}
-  when: copy_lock_after_details.json.lockStatus == "Locked"
+    msg:  Copies have been successfully with {{copy_name}}
+  when: item.json.lockStatus == "Locked"
+  with_items: 
+    "{{ copy_lock_after_details.results}}"
   tags:
    - lock
 
