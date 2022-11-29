@@ -9,8 +9,7 @@ lock - used to lock the copy
 
 
 ## Below is a picture of the replication's variable used in ansible tower.
-The image below shows how to run the job template in ansible tower:
-<img width="744" alt="TowerRun" src="https://user-images.githubusercontent.com/94111270/204515676-34150d15-2525-4868-8970-e058c3c27434.PNG">
+<img width="750" alt="Capture3" src="https://user-images.githubusercontent.com/94111270/204527386-bb8faa07-c150-4ee5-bfdf-20fb55b9c48f.PNG">
 
 ### using Anisble roles executing the crs replication playbook 
 #### These are the playbooks associated with the roles 
