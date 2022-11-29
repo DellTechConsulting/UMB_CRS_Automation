@@ -12,6 +12,8 @@ lock - used to lock the copy
 <img width="750" alt="Capture3" src="https://user-images.githubusercontent.com/94111270/204527386-bb8faa07-c150-4ee5-bfdf-20fb55b9c48f.PNG">
 
 ## This is the success ful job template in ansible tower .
+<img width="500" alt="Capture4" src="https://user-images.githubusercontent.com/94111270/204529271-9561632c-c8cc-417f-b344-ad880eff40bd.PNG">
+
 ### using Anisble roles executing the crs replication playbook 
 #### These are the playbooks associated with the roles 
    1 Policy_validation.yml
