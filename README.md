@@ -1,6 +1,6 @@
 # UMB-CRS Automation
 ## Automate CRS Replication 
-
+<img width="744" alt="TowerRun" src="https://user-images.githubusercontent.com/94111270/204515676-34150d15-2525-4868-8970-e058c3c27434.PNG">
 ## Excecute the crs_replication playbook 
 # using Anisble roles executing the playbook 
 # under the roles we have these are the playbooks 
