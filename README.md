@@ -56,3 +56,7 @@ Once its success , it display the success message.
 The image below shows how to run the job template in ansible tower:
 <img width="744" alt="TowerRun" src="https://user-images.githubusercontent.com/94111270/204515676-34150d15-2525-4868-8970-e058c3c27434.PNG">
 
+## How to run in Postman
+
+The image below shows a sample postman request:
+<img width="629" alt="Capture1" src="https://user-images.githubusercontent.com/94111270/204519699-5dce2061-4ac5-496f-afba-36a1dd72d2e8.PNG">
