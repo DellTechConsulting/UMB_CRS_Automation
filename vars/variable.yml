@@ -8,11 +8,11 @@ password: !vault |
           36656435653764336539363865356436363838346431623035386133346666353363303639316166
           6633323066326537650a356235333530633731646365336130653933313463396638393664363262
           3966
-pause_time: 10   ##  Time in minutes
+# pause_time: 10   ##  Time in minutes
 cid: []
 policy_name_list: []
 policy_id: []
 jid: []
 lock_status: []
-policy_name: ['TEST_NEW']
-action: "sync-copy"
+# policy_name: ['TEST_NEW']
+# action: "sync-copy"
