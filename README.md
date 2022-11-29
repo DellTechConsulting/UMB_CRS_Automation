@@ -55,7 +55,5 @@ Once its success , it display the success message.
 ## How to run in Tower
 
 The image below shows how to run the job template in ansible tower:
-<img src="images/TowerRun.png>
-   alt="Sample Tower Run"
-   style="align: left;"/>
+<img width="744" alt="TowerRun" src="https://user-images.githubusercontent.com/94111270/204515676-34150d15-2525-4868-8970-e058c3c27434.PNG">
 
