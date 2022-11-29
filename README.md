@@ -50,7 +50,6 @@ Task 1 -Get copy details using copy id and policy id
 In this task, we are keep on checking the job status untill the job get success. 
 Once its success , it display the success message. 
 
-
 ## How to run in Tower
 
 The image below shows how to run the job template in ansible tower:
