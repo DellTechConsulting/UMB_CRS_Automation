@@ -1,12 +1,12 @@
 - debug: 
     msg: "{{id1}}"
   tags:
-    - get
+    - create
 
 - debug: 
     msg: "{{jid1}}"
   tags:
-    - get
+    - create
 - import_tasks: check_job_status.yml
   tags:
-    - add
+    - create

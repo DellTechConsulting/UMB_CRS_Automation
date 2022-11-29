@@ -9,9 +9,7 @@
   include_tasks: replication.yml
   tags:
     - create
-    - get
   
-
 - name: checking the status of the copy
   include_tasks: check_job_status1.yml
   vars:  
@@ -21,24 +19,18 @@
     - "{{id}}"
     - "{{jid}}"  
   tags:
-    - always
-    - get
-    - add
+    - create
    
 
 - name:  validation of copy
   include_tasks: copy_validation.yml
   tags:
-    - always
-    - get
-    - add
+    - create
 
 - name: copy lock
   include_tasks: copy_lock.yml
   tags:
     - lock
-    - get
-    - add
 
 - name: checking the status of the copy lock
   include_tasks: copy_lock_status1.yml
@@ -49,9 +41,7 @@
     - "{{id}}"
     - "{{cid}}" 
   tags:
-    - always
-    - get
-    - add
+    - lock
 
 
 

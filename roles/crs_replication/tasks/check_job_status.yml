@@ -17,7 +17,7 @@
         body_format: json 
       register: results_login
       tags:
-        - always
+        - create
  
     - name: Get the job id status
       uri:
@@ -35,19 +35,19 @@
       register: policy_details
       failed_when: policy_details.json.status != "Success"
       tags:
-        - get
+        - create
 
   rescue:
   - debug:
       msg: "The job is still running and will keep reconnecting until it succeeds."
     tags:
-      - get
+      - create
     
       # Pause for 10 minutes to get the status.
   - pause:
       minutes: "{{pause_time}}"
     tags:
-      - add
+      - create
   - include_tasks: check_job_status.yml
     tags:
-      - add
+      - create

@@ -14,5 +14,5 @@ policy_name_list: []
 policy_id: []
 jid: []
 lock_status: []
-
-policy_name: ['CNWLinux1','CRS-RDC-LAB-NWSRV1','AVE','CRS_Test','CRS-RDC-LAB-NWSRV3','TEST_NEW']
+policy_name: ['TEST_NEW']
+action: "sync-copy"

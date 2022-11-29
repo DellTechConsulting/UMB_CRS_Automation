@@ -4,6 +4,7 @@
   gather_facts: no
   vars_files:
     - vars/variable.yml
+    # - vars/creds.yml
   tasks:
     # - include_role:
     #     name: crs_replication
@@ -13,3 +14,8 @@
 
   roles: 
   - { role: crs_replication, tags: ["crs_replication"] }
+  # # - { role: snmp, tags: ["snmp"] }
+  # - { role: email, tags: ["email"] }
+  # - { role: groupnet, tags: ["groupnet"] }
+  # - { role: accesszone, tags: ["accesszone"] }
+  # - { role: subnetandpool, tags: ["subnet", "pool"] }

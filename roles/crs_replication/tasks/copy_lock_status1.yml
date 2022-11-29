@@ -1,13 +1,13 @@
 - debug: 
     msg: "{{id1}}"
   tags: 
-    - get
+    - lock
 
 - debug: 
     msg: "{{cid1}}"
   tags:
-    - get
+    - lock
 
 - import_tasks: copy_lock_status.yml
   tags:
-    - add
+    - lock

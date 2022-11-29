@@ -14,15 +14,15 @@
     body_format: json 
   register: results_login
   tags:
-    - always
+    - lock
 
 - debug:
     msg: "{{results_login}}"
   tags:
-    - always
+    - lock
   
 
-- name: Get CR Policy details
+- name: Get copy details
   uri:
     validate_certs: no
     force_basic_auth: yes
@@ -40,26 +40,26 @@
     - "{{id}}"
     - "{{cid}}"
   tags:
-    - get
+    - lock
 
 
 - name: printing policy id exist
   debug: 
     msg: "{{ policy_details1}}"
   tags:
-    - get
+    - lock
 
 - set_fact:
     lock_status: "{{lock_status}} + [ '{{ item.json.lockStatus }}' ]"
   with_items: 
     - "{{ policy_details1.results}}"
   tags:
-    - get
+    - lock
 
 - debug: 
     msg: "{{lock_status}}"
   tags:
-    - tags
+    - lock
 
 - name: Failing the playbook scince copy is already locked.
   fail:
@@ -68,7 +68,7 @@
   with_items: 
     - "{{ policy_details1.results}}"
   tags:
-    - get
+    - lock
 
 - name: printing unlocked copy status
   debug: 
@@ -77,7 +77,7 @@
   with_items: 
     - "{{ policy_details1.results}}"
   tags:
-    - get
+    - lock
 
 - name: create replication of the Policy 
   uri:
