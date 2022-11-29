@@ -7,6 +7,12 @@ lock - used to lock the copy
 
 <img width="758" alt="Capture2" src="https://user-images.githubusercontent.com/94111270/204525422-06a3c96e-d5ce-4c78-bd1e-65a7039d7dfd.PNG">
 
+
+## How to run in Tower
+
+The image below shows how to run the job template in ansible tower:
+<img width="744" alt="TowerRun" src="https://user-images.githubusercontent.com/94111270/204515676-34150d15-2525-4868-8970-e058c3c27434.PNG">
+
 ### using Anisble roles executing the crs replication playbook 
 #### These are the playbooks associated with the roles 
    1 Policy_validation.yml
@@ -56,10 +62,7 @@ Task 1 -Get copy details using copy id and policy id
 In this task, we are keep on checking the job status untill the job get success. 
 Once its success , it display the success message. 
 
-## How to run in Tower
 
-The image below shows how to run the job template in ansible tower:
-<img width="744" alt="TowerRun" src="https://user-images.githubusercontent.com/94111270/204515676-34150d15-2525-4868-8970-e058c3c27434.PNG">
 
 ## How to run in Postman
 
