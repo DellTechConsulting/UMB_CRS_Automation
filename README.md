@@ -11,6 +11,7 @@ lock - used to lock the copy
 ## Below is a picture of the replication's variable used in ansible tower.
 <img width="750" alt="Capture3" src="https://user-images.githubusercontent.com/94111270/204527386-bb8faa07-c150-4ee5-bfdf-20fb55b9c48f.PNG">
 
+## This is the success ful job template in ansible tower .
 ### using Anisble roles executing the crs replication playbook 
 #### These are the playbooks associated with the roles 
    1 Policy_validation.yml
