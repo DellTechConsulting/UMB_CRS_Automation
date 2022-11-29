@@ -7,7 +7,7 @@ lock - used to lock the copy
 
 <img width="758" alt="Capture2" src="https://user-images.githubusercontent.com/94111270/204525422-06a3c96e-d5ce-4c78-bd1e-65a7039d7dfd.PNG">
 
-#### using Anisble roles executing the crs replication playbook 
+### using Anisble roles executing the crs replication playbook 
 #### These are the playbooks associated with the roles 
    1 Policy_validation.yml
    2 replication.yml
