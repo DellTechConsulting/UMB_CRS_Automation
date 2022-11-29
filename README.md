@@ -1,5 +1,10 @@
 ## UMB-CRS Automation
 ### Automate CRS Replication 
+### This is an alternative template for a replication usecase, in which we use tags such as get, add, create, and lock.
+get and add tags is used to get the details of policy and mapping the policy name to policy id 
+create -  used to replicate the policy
+lock - used to lock the copy
+
 #### using Anisble roles executing the crs replication playbook 
 #### These are the playbooks associated with the roles 
    1 Policy_validation.yml
