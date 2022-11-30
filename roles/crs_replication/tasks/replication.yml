@@ -5,7 +5,7 @@
   uri:
     validate_certs: no
     force_basic_auth: yes
-    url: https://{{CR_static_IP}}/cr/v5/actions/{{action}}
+    url: https://{{CR_static_IP}}/cr/v6/actions/{{action}}
     method: POST
     headers:
           Content-Type: application/json
