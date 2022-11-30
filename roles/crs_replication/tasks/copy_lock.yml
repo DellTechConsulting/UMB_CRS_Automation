@@ -3,7 +3,7 @@
 - name: Get CRS API authentication token
   uri:
     validate_certs: no
-    url: "https://{{CR_static_IP}}/cr/v5/login"
+    url: "https://{{CR_static_IP}}/cr/v6/login"
     method: POST
     headers:
       Content-Type: application/json
@@ -27,7 +27,7 @@
   uri:
     validate_certs: no
     force_basic_auth: yes
-    url: https://{{CR_static_IP}}/cr/v5/policies/{{item.0}}/copies/{{item.1}}
+    url: https://{{CR_static_IP}}/cr/v6/policies/{{item.0}}/copies/{{item.1}}
     method: GET
     headers:
         Content-Type: application/json
@@ -84,7 +84,7 @@
   uri:
     validate_certs: no
     force_basic_auth: yes
-    url: https://{{CR_static_IP}}/cr/v5/actions/lock
+    url: https://{{CR_static_IP}}/cr/v6/actions/lock
     method: POST
     headers:
         Content-Type: application/json
