@@ -38,7 +38,7 @@
 ## Printing the success message with the copy id
 - name: printing copy lock action status.
   debug: 
-    msg:  Copies have been locked successfully with {{copy_id}}
+    msg:  Copies have been locked successfully with copy id of {{copy_id}}
   tags:
    - lock
 
