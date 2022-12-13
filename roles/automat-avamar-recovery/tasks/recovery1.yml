@@ -7,6 +7,6 @@
     msg: "{{cr_restore_copy_source_id1}}"
   # tags:
   #   - create
-- import_tasks: rec.yml
+- import_tasks: recovery.yml
   # tags:
   #   - create

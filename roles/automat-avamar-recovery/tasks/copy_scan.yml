@@ -39,7 +39,7 @@
     status_code: 200
     body:
       {
-        "appid": "626fb2349a6dd20001b2389a"
+        "appid": "{{cs_app_id}}"
       }
   register: results_Createpolicy
 
@@ -53,9 +53,7 @@
   with_items: 
     - "{{results_Createpolicy}}"
 
-# - include_tasks: copy_scan.yml
-#   # tags:
-#   #   - create
+
 - debug:
     msg: "{{jid}}"
   # tags:

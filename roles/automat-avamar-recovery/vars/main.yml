@@ -1,13 +1,18 @@
 ---
 cr_restore_policy_name: ['Test_New','CRS-RDC-LAB-NWSRV1','CNWLinux1'] 
+cr_restore_cs_app_name: CS
+cr_restore_AVE_app_name: AVE
+pause_time: 10
+
 crrest_secure_logging: true
+crrest_verify_certs: false
+cr_restor_use_latest: false
+cr_restore_use_latest: true
 crrest_portocol: https
 crrest_hostname: 10.118.162.79
 crrest_port: 14777
 crrest_api_version: v6
 crrest_base_url: "{{crrest_portocol}}://{{crrest_hostname}}:{{crrest_port}}/cr/{{crrest_api_version}}"
-crrest_verify_certs: false
-cr_restor_use_latest: false
 crrest_username: desaia4
 crrest_password: !vault |
                  $ANSIBLE_VAULT;1.1;AES256
@@ -16,9 +21,7 @@ crrest_password: !vault |
                  36656435653764336539363865356436363838346431623035386133346666353363303639316166
                  6633323066326537650a356235333530633731646365336130653933313463396638393664363262
                  3966
-# crrest_password: $56Kasper%67
-cr_restore_application_name: AVE
-cr_restore_use_latest: true
+
 cr_policy_id: []
 sandbox_id: []
 policy_name_list: []
@@ -27,9 +30,6 @@ copy_id: []
 cr_restore_copy_source: []
 cr_restore_copy_source_id: []
 jid: []
-pause_time: 10
-cr_restore_cs_app_name: CS
 app_name_list: []
 cs_app_id: []
-cr_restore_AVE_app_name: AVE
 app_id: []

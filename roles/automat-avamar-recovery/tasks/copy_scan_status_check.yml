@@ -40,11 +40,7 @@
         return_content: yes
       register: job_id_status
       failed_when: job_id_status.json.status != "Success"
-      # with_together:
-      #   - "{{id1}}"
-      #   - "{{jid}}"
-      # tags:
-      #   - create
+
 
   rescue:
   - debug:
@@ -59,7 +55,4 @@
     #   - create
   - include_tasks: copy_scan_status_check.yml
 
-  # - include_tasks: copy_scan.yml
-    # tags:
-    #   - create
 

@@ -21,48 +21,6 @@
         # tags:
         #   - check
 
-      # - name: Gather Policy information
-      #   uri:
-      #     url: "{{crrest_base_url}}/policies"
-      #     return_content: yes
-      #     validate_certs: "{{crrest_verify_certs}}"
-      #     method: GET
-      #     headers:
-      #       X-CR-AUTH-TOKEN: "{{crrest_token}}"
-      #   register: crrest_policies_info
-      #   changed_when: false
-
-      
-      # - name: Fail to return any policies
-      #   when: (crrest_policies_info.json['items'] | length) == 0
-      #   fail:
-      #     msg: "There were no policies found"
-
-      # - name: setting facts based on the policy "{{cr_restore_policy_name}}"
-      #   when: "'{{cr_restore_policy_name}}'in cr_restore_policy_name"
-      #   register: found
-      #   set_fact:
-      #     # mtree: "{{crrest_policies_info.json['items'][0]['assetDetails'][0].mgmtddReplCtxName}}"
-      #     cr_policy_id: "{{crrest_policies_info.json['items'][0].id}}"
-      #     # cr_policy_info: "{{crrest_policies_info.json['items'][0]}}"
-
-  
-        # when: "'{{cr_restore_policy_name}}'in cr_restore_policy_name"
-      # - name: setting facts based on the policy "{{cr_restore_policy_name}}"
-      #   when: "'{{cr_restore_policy_name}}'in cr_restore_policy_name"
-      #   register: found
-      #   set_fact:
-      #     cr_policy_id: "{{cr_policy_id + [item.id]}}"
-      #   with_items: "{{ crrest_policies_info | json_query('json.items[*]')}}"
-
-      # - debug:
-      #     msg: "{{cr_policy_id}}"
-
-      # - name: fail if not found
-      #   when: found is skipped
-      #   fail:
-      #     msg: couldn't find Policy Name
-
       ################# Checking for Existing Sandbox
 
 
@@ -180,12 +138,10 @@
             {
               "policyID": "{{id1}}",
               "copyID": "{{cr_restore_copy_source_id1}}",
-              "appID": "61beeade9a6dd2000150e772"
+              "appID": "{{ app_id }}"
             }
         register: results_Createpolicy
 
-      # - include_tasks: rec.yml
-        
       #   tags:
       #     - recover
 
@@ -221,15 +177,24 @@
                 X-CR-AUTH-TOKEN: "{{ crrest_token }}"
                 Accept: application/json
         register: crrest_sandbox_info
+        
+      - set_fact:
+    # Select the copies that start with cr-copy-POLICYNAME-DATEPROVIDED, and then sort by creationDate and choose the most recent from that filtered list
+          cr_id:  "{{ crrest_sandbox_info.json['items'] | json_query(query) | sort(attribute='copyid')  }}"
       #   tags:
       #     - recover
+      - name: Set copy id
+        set_fact:
+          cr_id1: "{{ cr_id1 + [item] }}"
+        with_items:
+            - "{{ cr_id }}"
+            
       - name: printing sandbox exist
         debug: 
-          msg: "The sanbox created and recovered the copy successfully"
+          msg: "The sanbox created and recovered the copy  {{cr_id1}}successfully"
         when: (crrest_sandbox_info.json['items'] | length) != 0
       #   tags:
       #     - recover
-      # - include_tasks: rec.yml
 
       # - name: analysis report
       #   uri:

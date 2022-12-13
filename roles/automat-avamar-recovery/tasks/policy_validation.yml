@@ -51,7 +51,7 @@
   #   - get
 
 
-## verifying whether or not the passing policy name 
+## verifying whether or not the passing policy name exist/not
 
 - name: printing policy name exist
   debug: 
@@ -59,7 +59,7 @@
   # tags:
   #   - add
 
-- name: Failing the playbook scinc epolicy name  does not exist
+- name: Failing the playbook since policy name does not exist
   fail:
     msg: Failing the playbook scince {{item}} does not exist.
   when: item not in policy_name_list

@@ -2,20 +2,5 @@
 - hosts: localhost 
   connection: local
   gather_facts: no
-  # vars_files:
-  #   - vars/variable.yml
-    # - vars/creds.yml
-  tasks:
-    # - include_role:
-    #     name: crs_replication
-      # tags:
-      #   - add
-      #   - get
-
   roles: 
   - { role: automat-avamar-recovery, tags: ["crs_replication"] }
-#   - { role: automate-crs-replication, tags: ["snmp"] }
-  # - { role: email, tags: ["email"] }
-  # - { role: groupnet, tags: ["groupnet"] }
-  # - { role: accesszone, tags: ["accesszone"] }
-  # - { role: subnetandpool, tags: ["subnet", "pool"] }
