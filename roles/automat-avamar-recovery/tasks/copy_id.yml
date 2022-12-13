@@ -9,12 +9,16 @@
       username: "{{crrest_username}}"
       password: "{{crrest_password}}"
   register: crrest_login_info
+  tags:
+    - get
 
 
 - name: Set Login Token
   set_fact:
     crrest_token: "{{crrest_login_info.json.accessToken}}"
     crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
+  tags:
+    - get
 
 - name: Get Copies
   uri:
@@ -26,15 +30,21 @@
       X-CR-AUTH-TOKEN: "{{ crrest_token }}"
   register: crrest_copies_info
   changed_when: false
+  tags:
+    - get
 
 - debug:
     msg: "{{crrest_copies_info}}"
+  tags:
+    - get
 
 
 - name: Get latest copy
   when: cr_restore_use_latest
   set_fact:
     cr_restore_copy_source:  "{{ crrest_copies_info.json['items'] | sort(attribute='creationDate') | last }}"
+  tags:
+    - get
 
 - name: Get Copy by date
   when:
@@ -45,12 +55,18 @@
     cr_restore_copy_source:  "{{ crrest_copies_info.json['items'] | json_query(query) | sort(attribute='creationDate') | last }}"
   vars:
     query: "[?starts_with(copyname, `cr-copy-{{ cr_restore_policy_name }}`)]"
+  tags:
+    - get
 
 - name: Set copy id
   set_fact:
     cr_restore_copy_source_id: "{{ cr_restore_copy_source_id + [item] }}"
   with_items:
     - "{{ cr_restore_copy_source.id }}"
+  tags:
+    - get
 
 - debug: 
     msg: "{{cr_restore_copy_source_id}}"
+  tags:
+    - get

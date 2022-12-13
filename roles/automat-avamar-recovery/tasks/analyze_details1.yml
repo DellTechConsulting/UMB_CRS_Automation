@@ -1,12 +1,12 @@
 - debug: 
     msg: "{{id1}}"
-  # tags:
-  #   - create
+  tags:
+    - analysisstatus
 
 - debug: 
     msg: "{{cr_restore_copy_source_id1}}"
-  # tags:
-  #   - create
+  tags:
+    - analysisstatus
 - import_tasks: analyze_details.yml
-  # tags:
-  #   - create
+  tags:
+    - analysisstatus

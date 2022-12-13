@@ -10,20 +10,18 @@
             username: "{{crrest_username}}"
             password: "{{crrest_password}}"
         register: crrest_login_info
-        # tags:
-        #   - check
+        tags:
+          - check
 #        no_log: "crrest_secure_logging"
 
       - name: Set Login Token
         set_fact:
           crrest_token: "{{crrest_login_info.json.accessToken}}"
           crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
-        # tags:
-        #   - check
+        tags:
+          - check
 
       ################# Checking for Existing Sandbox
-
-
       - name: Check if Sandbox Exists
         uri:
           url: "{{ crrest_base_url }}/policies/{{id1}}/sandboxes"
@@ -33,50 +31,48 @@
                 X-CR-AUTH-TOKEN: "{{ crrest_token }}"
                 Accept: application/json
         register: crrest_sandbox_info
-      #   tags:
-      #     - check
+        tags:
+          - check
       
       - name: Fetching the sandbox id  from the sandbox details 
         set_fact:
           sandbox_id: "{{sandbox_id + [item.id]}}"
         with_items: "{{ crrest_sandbox_info | json_query('json.items[*]')}}"
-      #   tags:
-      #     - check
+        tags:
+          - check
 
       - debug: 
           msg: "{{sandbox_id}}"
-      #   tags:
-      #     - check
-      #     - delete
-      #     - fail
-
+        tags:
+          - check
+          - delete
+          - fail
+          - recover
 
       - name: Failing the playbook scinc sandbox not exist
         when: (crrest_sandbox_info.json['items'] | length) != 0
         fail:
           msg: "sandbox exist for this policy we can not create sandbox and recover"
-      #   tags:
-      #     - fail
-
+        tags:
+          - fail
 
       - name: printing sandbox exist
         debug: 
           msg: "There were no sandbox found"
         when: (crrest_sandbox_info.json['items'] | length) == 0
-      #   tags:
-      #     - check
+        tags:
+          - check
 
       # - name: Delete Sandbox
       #   uri:
-      #    url: "{{ crrest_base_url }}/policies/{{ cr_policy_id }}/sandboxes/{{ item }}"
+      #    url: "{{ crrest_base_url }}/policies/{{ id1 }}/sandboxes/{{ sandbox_id1 }}"
       #    validate_certs: "{{ crrest_verify_certs }}"
       #    method: DELETE
       #    headers:
       #       X-CR-AUTH-TOKEN: "{{ crrest_token }}"
       #       Accept: application/json
       #   register: crrest_sandbox_delete
-      #   with_items: 
-      #     - "{{sandbox_id}}"
+     
       #   tags: 
       #     - delete
 
@@ -106,13 +102,14 @@
 
       # - name: Check Sandbox status 
       #   uri:
-      #     url: "{{ crrest_base_url }}/policies/639193fd94422f0001606cd8/sandboxes"
+      #     url: "{{ crrest_base_url }}/policies/{{id1}}/sandboxes"
       #     validate_certs: "{{ crrest_verify_certs }}"
       #     method: GET
       #     headers:
       #           X-CR-AUTH-TOKEN: "{{ crrest_token }}"
       #           Accept: application/json
       #   register: crrest_sandbox_info
+      
       #   tags:
       #     - delete
       # - name: printing sandbox exist
@@ -121,6 +118,8 @@
       #   when: (crrest_sandbox_info.json['items'] | length) == 0
       #   tags:
       #     - delete
+      
+      
       - name: Get all CR application details
         uri:
           validate_certs: "{{crrest_verify_certs}}"
@@ -135,16 +134,16 @@
           status_code: 200
           return_content: yes
         register: app_details
-      # tags:
-      #   - get
+        tags:
+          - recover
 
     ## Obtaining the application names from the app_details
       - name: Fetching the application name from the app details 
         set_fact:
           app_name_list: "{{app_name_list + [item.nickname]}}"
         with_items: "{{ app_details | json_query('json.items[*]')}}"
-      # tags:
-      #   - get
+        tags:
+          - recover
 
 
     ## verifying whether or not the passing policy name 
@@ -152,7 +151,8 @@
       - name: printing app name exist
         debug: 
           msg: "allpication {{ cr_restore_AVE_app_name}} exist"
-        
+        tags:
+          - recover
 
       - name: Failing the playbook scinc app name  does not exist
         fail:
@@ -160,9 +160,9 @@
         when: item not in app_name_list
         with_items:
           - "{{cr_restore_AVE_app_name}}"
-        
-
-        
+        tags:
+          - recover
+             
       - name: Map the CS app name with app id 
         set_fact: 
           app_id: "{{ item.id }}"
@@ -170,18 +170,19 @@
           - item.nickname in cr_restore_AVE_app_name
         with_items: 
           - "{{ app_details | json_query('json.items[*]')}}"
-
-      # tags:
-      #   - add
-
+        tags:
+          - recover
         
       - set_fact:
           app_id: "{{app_id}}"
-      # tags:
-      #   - add
+        tags:
+          - recover
 
       - debug:
           msg: "{{ cs_app_id }}"
+        tags:
+          - recover
+
       - name: recovery for the copy
         uri:
           validate_certs: no
@@ -201,14 +202,13 @@
               "appID": "{{ app_id }}"
             }
         register: results_Createpolicy
-
-      #   tags:
-      #     - recover
+        tags:
+          - recover
 
       - pause:
           minutes: 5
-      #   tags:
-      #     - recover
+        tags:
+          - recover
       - name: login
         uri:
           url: "{{crrest_base_url}}/login"
@@ -225,8 +225,8 @@
         set_fact:
           crrest_token: "{{crrest_login_info.json.accessToken}}"
           crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
-      #   tags:
-      #     - recover
+        tags:
+          - recover
 
       - name: Check Sandbox status 
         uri:
@@ -237,24 +237,21 @@
                 X-CR-AUTH-TOKEN: "{{ crrest_token }}"
                 Accept: application/json
         register: crrest_sandbox_info
-        
-      - set_fact:
-    # Select the copies that start with cr-copy-POLICYNAME-DATEPROVIDED, and then sort by creationDate and choose the most recent from that filtered list
-          cr_id:  "{{ crrest_sandbox_info.json['items'] | json_query(query) | sort(attribute='copyid')  }}"
-      #   tags:
-      #     - recover
-      - name: Set copy id
+        tags:
+          - recover
+      - name: Fetching the policy names from the policy details 
         set_fact:
-          cr_id1: "{{ cr_id1 + [item] }}"
-        with_items:
-            - "{{ cr_id }}"
-            
+           cr_id1: "{{ cr_id1 + [item.copyid]}}"
+        with_items: "{{ crrest_sandbox_info | json_query('json.items[*]')}}"
+        tags:
+          - recover
+                  
       - name: printing sandbox exist
         debug: 
           msg: "The sanbox created and recovered the copy  {{cr_id1}}successfully"
         when: (crrest_sandbox_info.json['items'] | length) != 0
-      #   tags:
-      #     - recover
+        tags:
+          - recover
 
       # - name: analysis report
       #   uri:

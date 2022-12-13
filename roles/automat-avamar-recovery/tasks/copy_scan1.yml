@@ -1,13 +1,13 @@
 - debug: 
     msg: "{{id1}}"
-  # tags:
-  #   - create
+  tags:
+    - scan
 
 - debug: 
     msg: "{{cr_restore_copy_source_id1}}"
-  # tags:
-  #   - create
+  tags:
+    - scan
 
 - import_tasks: copy_scan.yml
-  # tags:
-  #   - create
+  tags:
+    - scan

@@ -15,14 +15,14 @@
       password: "{{crrest_password}}"
     body_format: json 
   register: crrest_login_info
-  # tags:
-  #   - add
+  tags:
+    - add
 - name: Set Login Token
   set_fact:
     crrest_token: "{{crrest_login_info.json.accessToken}}"
     crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
-  # tags:
-  #   - add
+  tags:
+    - add
 
 ## Gathering all policy details available in the CR lab
 - name: Get all CR Policy details
@@ -39,16 +39,16 @@
     status_code: 200
     return_content: yes
   register: policy_details
-  # tags:
-  #   - get
+  tags:
+    - add
 
 ## Obtaining the policy names from the policy_details
 - name: Fetching the policy names from the policy details 
   set_fact:
     policy_name_list: "{{policy_name_list + [item.policyName]}}"
   with_items: "{{ policy_details | json_query('json.items[*]')}}"
-  # tags:
-  #   - get
+  tags:
+    - add
 
 
 ## verifying whether or not the passing policy name exist/not
@@ -56,8 +56,8 @@
 - name: printing policy name exist
   debug: 
     msg: "policy {{ cr_restore_policy_name}} exist"
-  # tags:
-  #   - add
+  tags:
+    - add
 
 - name: Failing the playbook since policy name does not exist
   fail:
@@ -65,8 +65,8 @@
   when: item not in policy_name_list
   with_items:
     - "{{cr_restore_policy_name}}"
-#   # tags:
-#   #   - add
+  tags:
+    - add
 
 ## Mapping the policy name with policy id 
 
@@ -77,15 +77,15 @@
     - item.policyName in cr_restore_policy_name
   with_items: 
     - "{{ policy_details | json_query('json.items[*]')}}"
-  # tags:
-  #   - add
+  tags:
+    - add
 
 - set_fact:
     id: "{{policy_id}}"
-  # tags:
-  #   - add
+  tags:
+    - add
 
 - debug:
     msg: "{{ id }}"
-#   # tags:
-#   #   - add
+  tags:
+    - add
