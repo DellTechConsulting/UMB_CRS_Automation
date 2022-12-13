@@ -1,8 +1,8 @@
 ---
-cr_restore_policy_name: ['Test_New','CRS-RDC-LAB-NWSRV1','CNWLinux1'] 
-cr_restore_cs_app_name: CS
-cr_restore_AVE_app_name: AVE
-pause_time: 10
+# cr_restore_policy_name: ['Test_New','CRS-RDC-LAB-NWSRV1','CNWLinux1'] 
+# cr_restore_cs_app_name: CS
+# cr_restore_AVE_app_name: AVE
+# pause_time: 10
 
 crrest_secure_logging: true
 crrest_verify_certs: false
