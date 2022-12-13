@@ -16,7 +16,7 @@ crrest_password: !vault |
                  36656435653764336539363865356436363838346431623035386133346666353363303639316166
                  6633323066326537650a356235333530633731646365336130653933313463396638393664363262
                  3966
-crrest_password: $56Kasper%67
+# crrest_password: $56Kasper%67
 cr_restore_application_name: AVE
 cr_restore_use_latest: true
 cr_policy_id: []
