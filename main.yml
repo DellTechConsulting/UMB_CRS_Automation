@@ -14,7 +14,7 @@
 
   roles: 
   - { role: automat-avamar-recovery, tags: ["crs_replication"] }
-#  
+  - { role: automate-crs-replication, tags: ["snmp"] }
   # - { role: email, tags: ["email"] }
   # - { role: groupnet, tags: ["groupnet"] }
   # - { role: accesszone, tags: ["accesszone"] }
