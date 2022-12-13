@@ -1,0 +1,127 @@
+--- 
+## Log in to Cr Lab and generate a new token because the old token expires every 50-60 seconds.
+
+- name: Get CRS API authentication token
+  uri:
+    validate_certs: "{{crrest_verify_certs}}"
+    url: "{{crrest_base_url}}/login"
+    method: POST
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    return_content: yes
+    body:
+        username: "{{crrest_username}}"
+        password: "{{crrest_password}}"
+    body_format: json 
+  register: crrest_login_info
+  tags:
+    - scan
+
+- name: Set Login Token
+  set_fact:
+    crrest_token: "{{crrest_login_info.json.accessToken}}"
+    crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
+  tags:
+    - scan
+
+- name: Get all CR application details
+  uri:
+    validate_certs: "{{crrest_verify_certs}}"
+    force_basic_auth: yes
+    url: "{{crrest_base_url}}/apps"
+    method: GET
+    headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+    body_format: json
+    status_code: 200
+    return_content: yes
+  register: app_details
+  tags:
+    - scan
+
+
+## Obtaining the application names from the app_details
+- name: Fetching the application name from the app details 
+  set_fact:
+    app_name_list: "{{app_name_list + [item.nickname]}}"
+  with_items: "{{ app_details | json_query('json.items[*]')}}"
+  tags:
+    - scan
+## verifying whether or not the passing policy name 
+
+- name: printing app name exist
+  debug: 
+    msg: "allpication {{ cr_restore_cs_app_name}} exist"
+  tags:
+    - scan
+    
+
+- name: Failing the playbook since app name  does not exist
+  fail:
+    msg: Failing the playbook since {{item}} does not exist.
+  when: item not in app_name_list
+  with_items:
+    - "{{cr_restore_cs_app_name}}"
+  tags:
+    - scan
+       
+- name: Map the CS app name with app id 
+  set_fact: 
+    cs_app_id: "{{ item.id }}"
+  when: 
+    - item.nickname in cr_restore_cs_app_name
+  with_items: 
+    - "{{ app_details | json_query('json.items[*]')}}"
+  tags:
+    - scan
+
+- set_fact:
+    cs_app_id: "{{cs_app_id}}"
+  tags:
+    - scan
+
+- debug:
+    msg: "{{ cs_app_id }}"
+  tags:
+    - scan
+
+# Scan the copy using cyber sense
+- name: analyze PIN copy
+  uri:
+    validate_certs: "{{crrest_verify_certs}}"
+    force_basic_auth: yes
+    url: "{{ crrest_base_url }}/policies/{{id1}}/copies/{{cr_restore_copy_source_id1}}/analyze"
+    method: POST
+    headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+    body_format: json
+    status_code: 200
+    body:
+      {
+        "appid": "{{cs_app_id}}"
+      }
+  register: results_Createpolicy
+  tags:
+    - scan
+  
+
+- debug: 
+    msg: "{{results_Createpolicy}}"
+  tags:
+    - scan
+## Obtaining the job id from the last result and stored in jid variable
+- set_fact:
+    jid: "{{jid}} + [ '{{ item.json.id }}' ]"
+  with_items: 
+    - "{{results_Createpolicy}}"
+  tags:
+    - scan
+- debug:
+    msg: "{{jid}}"
+  tags:
+    - scan
