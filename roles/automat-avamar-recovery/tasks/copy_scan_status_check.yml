@@ -4,50 +4,62 @@
   block: 
     - name: Get CRS API authentication token
       uri:
-        validate_certs: no
-        url: "https://{{CR_static_IP}}/cr/v6/login"
+        validate_certs: "{{crrest_verify_certs}}"
+        url: "{{crrest_base_url}}/login"
         method: POST
         headers:
           Content-Type: application/json
           Accept: application/json
         return_content: yes
         body:
-            username: "{{username}}"
-            password: "{{password}}"
+            username: "{{crrest_username}}"
+            password: "{{crrest_password}}"
         body_format: json 
-      register: results_login
-      tags:
-        - create
+      register: crrest_login_info
+      # tags:
+      #   - create
+
+    - name: Set Login Token
+      set_fact:
+        crrest_token: "{{crrest_login_info.json.accessToken}}"
+        crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
+
 ## Check the job status by using the job id
     - name: Get the job id status
       uri:
         validate_certs: no
         force_basic_auth: yes
-        url: https://{{CR_static_IP}}/cr/v6/policies/{{id1}}/jobs/{{jid1}}    
+        url: "{{crrest_base_url}}/policies/{{id1}}/jobs/{{jid1}}"    
         method: GET
         headers:
               Content-Type: application/json
               Accept: application/json
-              X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+              X-CR-AUTH-TOKEN: "{{ crrest_token}}"
         body_format: json
         status_code: 200
         return_content: yes
       register: job_id_status
       failed_when: job_id_status.json.status != "Success"
-      tags:
-        - create
+      # with_together:
+      #   - "{{id1}}"
+      #   - "{{jid}}"
+      # tags:
+      #   - create
 
   rescue:
   - debug:
       msg: "The job is still running and will keep reconnecting until it succeeds."
-    tags:
-      - create
+    # tags:
+    #   - create
     
 # Pause for 10 minutes to get the job status.
   - pause:
       minutes: "{{pause_time}}"
-    tags:
-      - create
-  - include_tasks: check_job_status.yml
-    tags:
-      - create
+    # tags:
+    #   - create
+  - include_tasks: copy_scan_status_check.yml
+
+  # - include_tasks: copy_scan.yml
+    # tags:
+    #   - create
+

@@ -1,0 +1,12 @@
+- debug: 
+    msg: "{{id1}}"
+  # tags:
+  #   - create
+
+- debug: 
+    msg: "{{cr_restore_copy_source_id1}}"
+  # tags:
+  #   - create
+- import_tasks: analyze_details.yml
+  # tags:
+  #   - create

@@ -1,0 +1,155 @@
+--- 
+## Log in to Cr Lab and generate a new token because the old token expires every 50-60 seconds.
+
+- name: Get CRS API authentication token
+  uri:
+    validate_certs: "{{crrest_verify_certs}}"
+    url: "{{crrest_base_url}}/login"
+    method: POST
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    return_content: yes
+    body:
+        username: "{{crrest_username}}"
+        password: "{{crrest_password}}"
+    body_format: json 
+  register: crrest_login_info
+  # tags:
+  #   - create
+
+- name: Set Login Token
+  set_fact:
+    crrest_token: "{{crrest_login_info.json.accessToken}}"
+    crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
+
+
+# Scan the copy using cyber sense
+- name: analyze PIN copy
+  uri:
+    validate_certs: "{{crrest_verify_certs}}"
+    force_basic_auth: yes
+    url: "{{ crrest_base_url }}/policies/{{id1}}/copies/{{cr_restore_copy_source_id1}}/analyze"
+    method: POST
+    headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+    body_format: json
+    status_code: 200
+    body:
+      {
+        "appid": "626fb2349a6dd20001b2389a"
+      }
+  register: results_Createpolicy
+
+- debug: 
+    msg: "{{results_Createpolicy}}"
+  # tags:
+  #   - create
+## Obtaining the job id from the last result and stored in jid variable
+- set_fact:
+    jid: "{{jid}} + [ '{{ item.json.id }}' ]"
+  with_items: 
+    - "{{results_Createpolicy}}"
+
+# - include_tasks: copy_scan.yml
+#   # tags:
+#   #   - create
+- debug:
+    msg: "{{jid}}"
+  # tags:
+  #   - create
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# - name: Get analysis on PIT copy with id
+#   uri:
+#     validate_certs: no
+#     force_basic_auth: yes
+#     url: https://{{CR_static_IP}}/cr/v5/policies/601823fa94422f000116fe4a/copies/638710f794422f0001606b88/analyze
+#     method: GET
+#     headers:
+#           Content-Type: application/json
+#           Accept: application/json
+#           X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+#     body_format: json
+#     status_code: 200
+#     return_content: yes
+#   register: results_Createpolicy
+
+# - debug:
+#     msg: "{{results_Createpolicy}}"
+
+
+# - name: recovery for the copy
+#   uri:
+#     validate_certs: no
+#     force_basic_auth: yes
+#     url: https://{{CR_static_IP}}/cr/v5/actions/recoverapp
+#     method: POST
+#     headers:
+#           Content-Type: application/json
+#           Accept: application/json
+#           X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+#     body_format: json
+#     status_code: 200
+#     body:
+#       {
+#         "policyID": "637dafa294422f00016068cf",
+#         "copyID": "638710f994422f0001606b89",
+#         "appID": "61beeade9a6dd2000150e772"
+#       }
+#   register: results_Createpolicy
+#   changed_when: true
+
+
+# - name: Get Copies
+#   uri:
+#     url: "https://{{CR_static_IP}}/cr/v5/policies/637dafa294422f00016068cf/copies"
+#     validate_certs: no
+#     method: GET
+#     body_format: json
+#     headers:
+#       X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+#   register: crrest_copies_info
+#   changed_when: false
+
+
+# - name: Fail if no copies were found
+#   when: (crrest_copies_info.json['items'] | length) == 0
+#   fail:
+#     msg: "There were no copies for policy id {{ cr_policy_id }}"
+
+# - name: Get latest copy
+#   when: cr_restore_use_latest
+#   set_fact:
+#     cr_restore_copy_source:  "{{ crrest_copies_info.json['items'] | sort(attribute='creationDate') | last }}"
+
+
+
+
+# - name: Get Copy by date
+#   when:
+#     - not cr_restore_use_latest
+#     - cr_restore_date is defined
+#   set_fact:
+#     # Select the copies that start with cr-copy-POLICYNAME-DATEPROVIDED, and then sort by creationDate and choose the most recent from that filtered list
+#     cr_restore_copy_source:  "{{ crrest_copies_info.json['items'] | json_query(query) | sort(attribute='creationDate') | last }}"
+#   vars:
+#     query: "[?starts_with(copyname, `cr-copy-{{ cr_restore_policy_name }}`)]"

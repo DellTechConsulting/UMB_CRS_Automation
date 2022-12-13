@@ -1,0 +1,118 @@
+--- 
+## Log in to Cr Lab and generate a new token because the old token expires every 50-60 seconds.
+
+- name: Get CRS API authentication token
+  uri:
+    validate_certs: "{{crrest_verify_certs}}"
+    url: "{{crrest_base_url}}/login"
+    method: POST
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    return_content: yes
+    body:
+        username: "{{crrest_username}}"
+        password: "{{crrest_password}}"
+    body_format: json 
+  register: crrest_login_info
+
+- name: Set Login Token
+  set_fact:
+    crrest_token: "{{crrest_login_info.json.accessToken}}"
+    crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
+  # tags:
+  #   - create
+# - name: Get the job id status
+#   uri:
+#     validate_certs: no
+#     force_basic_auth: yes
+#     url: "{{crrest_base_url}}/policies/{{id1}}/jobs/{{jid1}}"    
+#     method: GET
+#     headers:
+#           Content-Type: application/json
+#           Accept: application/json
+#           X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+#     body_format: json
+#     status_code: 200
+#     return_content: yes
+#   register: job_id_status
+  # failed_when: job_id_status.json.status != "Success"
+# - name: analysis report
+#   uri:
+#     validate_certs: no
+#     force_basic_auth: yes
+#     url: "{{crrest_base_url}}/policies/copies/{{item}}/analysisreports"
+#     method: GET
+#     headers:
+#           Content-Type: application/json
+#           Accept: application/json
+#           X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+#     body_format: json
+#     status_code: 200
+#     body:
+#       {
+#         "List_of_email_addresses": [
+#         "divya_j_a@dell.com"
+#         ]
+#       }
+#     return_content: yes
+#   register: results_Createpolicy
+#   with_items:
+#     - "{{cr_restore_copy_source_id}}"
+
+
+- name: Get analysis details of the copy
+  uri:
+    validate_certs: "{{crrest_verify_certs}}"
+    force_basic_auth: yes
+    url: "{{crrest_base_url}}/policies/{{id1}}/copies/{{cr_restore_copy_source_id1}}"
+    method: GET
+    headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+    body_format: json
+    status_code: 200
+    return_content: yes
+  register: results_Createpolicy
+
+
+
+
+# - name: Get all the sandboxes for the copy
+#   uri:
+#     validate_certs: no
+#     force_basic_auth: yes
+#     url: https://{{CR_static_IP}}/cr/v5/policies/{{id}}/sandboxes
+#     method: GET
+#     headers:
+#           Content-Type: application/json
+#           Accept: application/json
+#           X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+#     body_format: json
+#     status_code: 200
+#     return_content: yes
+#   register: results_sandbox
+
+- debug:
+    msg: "Copy is good we can recover and restore it"
+  when:
+    - results_Createpolicy.json.lastAnalysisStatus == "Good"
+
+# - mail:
+#     host: "{{ host }}"
+#     port: "{{ port }}"
+#     from: "{{ From }}"
+#     to: "{{ To }}"
+#     subject: "Alert- copy is having some issue"
+#     body: "Please find attached details of the copy." 
+#     msg: Failing the playbook scince copy is not good.
+#   when: results_Createpolicy.json.lastAnalysisStatus != "Good" 
+
+- name: Failing the playbook scinc copy is not good
+  fail:
+    msg: Failing the playbook scince copy is not good.
+  when: results_Createpolicy.json.lastAnalysisStatus != "Good"
+  # with_items:
+  #   - "{{policy_name}}" 
+# - include_tasks: analyze_details.yml

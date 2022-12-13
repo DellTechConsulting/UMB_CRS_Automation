@@ -1,0 +1,12 @@
+- debug: 
+    msg: "{{id1}}"
+  # tags:
+  #   - create
+
+- debug: 
+    msg: "{{jid1}}"
+  # tags:
+  #   - create
+- import_tasks: copy_scan_status_check.yml
+  # tags:
+  #   - create

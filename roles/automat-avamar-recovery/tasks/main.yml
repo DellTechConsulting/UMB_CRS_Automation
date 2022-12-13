@@ -1,0 +1,116 @@
+---
+- name: login to CRS and scan the copy
+  include_tasks: policy_validation.yml
+# #   # tags:
+#   #   - check
+- name: checking the status of the copy
+  include_tasks: test.yml
+  vars:  
+    id1: "{{outer_item}}"
+  loop: "{{id}}"
+  loop_control: 
+    loop_var: outer_item
+
+- name: checking the status of the copy
+  include_tasks: copy_scan1.yml
+  vars:  
+    id1: "{{item.0}}"
+    cr_restore_copy_source_id1: "{{item.1}}"
+  with_together:
+    - "{{id}}"
+    - "{{cr_restore_copy_source_id}}" 
+
+- name: checking the status of the copy
+  include_tasks: copy_scan_status_check1.yml
+  vars:  
+    id1: "{{item.0}}"
+    jid1: "{{item.1}}"
+  with_together:
+    - "{{id}}"
+    - "{{jid}}" 
+#   tags:
+#     - check
+
+- name: scan the copy
+  include_tasks: analyze_details1.yml
+  vars:  
+    id1: "{{item.0}}"
+    cr_restore_copy_source_id1: "{{item.1}}"
+  with_together:
+    - "{{id}}"
+    - "{{cr_restore_copy_source_id}}" 
+
+- name: scan the copy
+  include_tasks: rec1.yml
+  vars:  
+    id1: "{{item.0}}"
+    cr_restore_copy_source_id1: "{{item.1}}"
+  with_together:
+    - "{{id}}"
+    - "{{cr_restore_copy_source_id}}" 
+
+# # #   # tags:
+# # #   #   - create
+
+# - name: login to CRS and scan the copy
+#   include_tasks: copy_scan_status_check.yml
+#   vars:  
+#     id1: "{{outer_item.0}}"
+#     jid1: "{{outer_item.1}}"
+#   loop:
+#     - "{{id}}"
+#     - "{{jid}}"
+#   loop_control: 
+#     loop_var: outer_item
+
+# - name: scan the copy
+#   include_tasks: analyze_details.yml
+# - name: login to CRS and scan the copy
+#   include_tasks: copy_scan_status_check1.yml
+#   vars:  
+#     id1: "{{item.0}}"
+#     jid1: "{{item.1}}"
+#   with_together:
+#     - "{{id}}"
+#     - "{{jid}}"  
+# #   # tags:
+#   #   - create
+   
+
+# - name:  validation of copy
+#   include_tasks: analyze_details.yml
+#   tags:
+#     - create
+# - name:  validation of copy
+#   include_tasks: analyze_details1.yml
+# - name:  validation of copy
+#   include_tasks: test.yml
+#   tags:
+#     - check
+#     - delete
+#     - fail
+#     - recover
+
+# - name: copy lock
+#   include_tasks: recovery.yml
+#   tags:
+#     - lock
+
+# - name: checking the status of the copy lock
+#   include_tasks: copy_lock_status1.yml
+#   vars:  
+#     id1: "{{item.0}}"
+#     cid1: "{{item.1}}"
+#   with_together:
+#     - "{{id}}"
+#     - "{{cid}}" 
+#   tags:
+#     - lock
+# - name: copy lock
+#   include_tasks: copy_lock_validation.yml
+#   tags:
+#     - lock
+
+
+
+

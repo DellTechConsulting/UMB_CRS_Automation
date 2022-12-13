@@ -1,0 +1,93 @@
+---
+- name: login
+  uri:
+    url: "{{crrest_base_url}}/login"
+    validate_certs: "{{crrest_verify_certs}}"
+    method: POST
+    body_format: json
+    body:
+      username: "{{crrest_username}}"
+      password: "{{crrest_password}}"
+  register: crrest_login_info
+
+
+- name: Set Login Token
+  set_fact:
+    crrest_token: "{{crrest_login_info.json.accessToken}}"
+    crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
+
+- name: Get Copies
+  uri:
+    url: "{{ crrest_base_url }}/policies/{{id1}}/copies"
+    validate_certs: "{{ crrest_verify_certs }}"
+    method: GET
+    body_format: json
+    headers:
+      X-CR-AUTH-TOKEN: "{{ crrest_token }}"
+  register: crrest_copies_info
+  changed_when: false
+
+- debug:
+    msg: "{{crrest_copies_info}}"
+
+
+- name: Get latest copy
+  when: cr_restore_use_latest
+  set_fact:
+    cr_restore_copy_source:  "{{ crrest_copies_info.json['items'] | sort(attribute='creationDate') | last }}"
+
+- name: Get Copy by date
+  when:
+    - not cr_restore_use_latest
+    - cr_restore_date is defined
+  set_fact:
+    # Select the copies that start with cr-copy-POLICYNAME-DATEPROVIDED, and then sort by creationDate and choose the most recent from that filtered list
+    cr_restore_copy_source:  "{{ crrest_copies_info.json['items'] | json_query(query) | sort(attribute='creationDate') | last }}"
+  vars:
+    query: "[?starts_with(copyname, `cr-copy-{{ cr_restore_policy_name }}`)]"
+
+- name: Set copy id
+  set_fact:
+    cr_restore_copy_source_id: "{{ cr_restore_copy_source_id + [item] }}"
+  with_items:
+    - "{{ cr_restore_copy_source.id }}"
+
+- debug: 
+    msg: "{{cr_restore_copy_source_id}}"
+
+# - name: analyze PIN copy
+#   uri:
+#     validate_certs: "{{crrest_verify_certs}}"
+#     force_basic_auth: yes
+#     url: "{{ crrest_base_url }}/policies/{{item.0}}/copies/{{item.1}}/analyze"
+#     method: POST
+#     headers:
+#           Content-Type: application/json
+#           Accept: application/json
+#           X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+#     body_format: json
+#     status_code: 200
+#     body:
+#       {
+#         "appid": "626fb2349a6dd20001b2389a"
+#       }
+#   register: results_Createpolicy
+#   with_together:
+#     - "{{id1}}"
+#     - "{{cr_restore_copy_source_id}}"
+
+# - debug: 
+#     msg: "{{results_Createpolicy}}"
+#   # tags:
+#   #   - create
+# ## Obtaining the job id from the last result and stored in jid variable
+# - set_fact:
+#     jid: "{{jid}} + [ '{{ item.json.id }}' ]"
+#   with_items: 
+#     - "{{results_Createpolicy.results}}"
+# #   # tags:
+# #   #   - create
+# - debug:
+#     msg: "{{jid}}"
+
+  

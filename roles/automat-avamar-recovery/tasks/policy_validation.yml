@@ -3,69 +3,70 @@
 ## Login into CRS lab
 - name: Get CRS API authentication token
   uri:
-    validate_certs: no
-    url: "https://{{CR_static_IP}}/cr/v6/login"
+    validate_certs: "{{crrest_verify_certs}}"
+    url: "{{crrest_base_url}}/login"
     method: POST
     headers:
       Content-Type: application/json
       Accept: application/json
     return_content: yes
     body:
-      username: "{{username}}"
-      password: "{{password}}"
+      username: "{{crrest_username}}"
+      password: "{{crrest_password}}"
     body_format: json 
-  register: results_login
-  tags:
-    - add
-
-- debug:
-    msg: "{{results_login}}"
-  tags:
-    - add
+  register: crrest_login_info
+  # tags:
+  #   - add
+- name: Set Login Token
+  set_fact:
+    crrest_token: "{{crrest_login_info.json.accessToken}}"
+    crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
+  # tags:
+  #   - add
 
 ## Gathering all policy details available in the CR lab
 - name: Get all CR Policy details
   uri:
-    validate_certs: no
+    validate_certs: "{{crrest_verify_certs}}"
     force_basic_auth: yes
-    url: https://{{CR_static_IP}}/cr/v6/policies
+    url: "{{crrest_base_url}}/policies"
     method: GET
     headers:
         Content-Type: application/json
         Accept: application/json
-        X-CR-AUTH-TOKEN: "{{ results_login.json.accessToken}}"
+        X-CR-AUTH-TOKEN: "{{ crrest_token}}"
     body_format: json
     status_code: 200
     return_content: yes
   register: policy_details
-  tags:
-    - get
+  # tags:
+  #   - get
 
 ## Obtaining the policy names from the policy_details
 - name: Fetching the policy names from the policy details 
   set_fact:
     policy_name_list: "{{policy_name_list + [item.policyName]}}"
   with_items: "{{ policy_details | json_query('json.items[*]')}}"
-  tags:
-    - get
+  # tags:
+  #   - get
 
 
 ## verifying whether or not the passing policy name 
 
 - name: printing policy name exist
   debug: 
-    msg: "policy {{ policy_name}} exist"
-  tags:
-    - add
+    msg: "policy {{ cr_restore_policy_name}} exist"
+  # tags:
+  #   - add
 
 - name: Failing the playbook scinc epolicy name  does not exist
   fail:
     msg: Failing the playbook scince {{item}} does not exist.
   when: item not in policy_name_list
   with_items:
-    - "{{policy_name}}"
-  tags:
-    - add
+    - "{{cr_restore_policy_name}}"
+#   # tags:
+#   #   - add
 
 ## Mapping the policy name with policy id 
 
@@ -73,19 +74,18 @@
   set_fact: 
     policy_id: "{{policy_id + [item.id] | list}}"
   when: 
-    - item.policyName in policy_name
+    - item.policyName in cr_restore_policy_name
   with_items: 
     - "{{ policy_details | json_query('json.items[*]')}}"
-  tags:
-    - add
+  # tags:
+  #   - add
 
 - set_fact:
     id: "{{policy_id}}"
-  tags:
-    - add
+  # tags:
+  #   - add
 
 - debug:
     msg: "{{ id }}"
-  tags:
-    - add
-
+#   # tags:
+#   #   - add
