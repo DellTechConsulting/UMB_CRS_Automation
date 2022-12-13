@@ -1,5 +1,5 @@
 ---
-cr_restore_policy_name: ['Test_New','CRS-RDC-LAB-NWSRV1','CNWLinux1'] 
+cr_restore_policy_name: ['Test_New','CNWLinux1','CRS_Test'] 
 cr_restore_cs_app_name: CS
 cr_restore_AVE_app_name: AVE
 pause_time: 10

@@ -1,8 +1,7 @@
 ---
 - name: login to CRS and get the policy deatils
   include_tasks: policy_validation.yml
-- name: login to CRS and application details
-  include_tasks: app.yml
+
 # #   # tags:
 #   #   - check
 - name:  Get the point in time copy of the policy
@@ -22,11 +21,12 @@
     - "{{id}}"
     - "{{cr_restore_copy_source_id}}" 
 
+
 - name: checking the analyze status of the copy
   include_tasks: copy_scan_status_check1.yml
   vars:  
-    id1: "{{item.0}}"
-    jid1: "{{item.1}}"
+    id1: "{{ item.0 }}"
+    jid1: "{{ item.1 }}"
   with_together:
     - "{{id}}"
     - "{{jid}}" 

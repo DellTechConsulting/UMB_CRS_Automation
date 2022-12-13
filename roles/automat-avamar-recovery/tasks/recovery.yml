@@ -121,7 +121,67 @@
       #   when: (crrest_sandbox_info.json['items'] | length) == 0
       #   tags:
       #     - delete
+      - name: Get all CR application details
+        uri:
+          validate_certs: "{{crrest_verify_certs}}"
+          force_basic_auth: yes
+          url: "{{crrest_base_url}}/apps"
+          method: GET
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+            X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+          body_format: json
+          status_code: 200
+          return_content: yes
+        register: app_details
+      # tags:
+      #   - get
 
+    ## Obtaining the application names from the app_details
+      - name: Fetching the application name from the app details 
+        set_fact:
+          app_name_list: "{{app_name_list + [item.nickname]}}"
+        with_items: "{{ app_details | json_query('json.items[*]')}}"
+      # tags:
+      #   - get
+
+
+    ## verifying whether or not the passing policy name 
+
+      - name: printing app name exist
+        debug: 
+          msg: "allpication {{ cr_restore_AVE_app_name}} exist"
+        
+
+      - name: Failing the playbook scinc app name  does not exist
+        fail:
+          msg: Failing the playbook scince {{item}} does not exist.
+        when: item not in app_name_list
+        with_items:
+          - "{{cr_restore_AVE_app_name}}"
+        
+
+        
+      - name: Map the CS app name with app id 
+        set_fact: 
+          app_id: "{{ item.id }}"
+        when: 
+          - item.nickname in cr_restore_AVE_app_name
+        with_items: 
+          - "{{ app_details | json_query('json.items[*]')}}"
+
+      # tags:
+      #   - add
+
+        
+      - set_fact:
+          app_id: "{{app_id}}"
+      # tags:
+      #   - add
+
+      - debug:
+          msg: "{{ cs_app_id }}"
       - name: recovery for the copy
         uri:
           validate_certs: no
