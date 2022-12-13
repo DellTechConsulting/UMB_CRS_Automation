@@ -59,9 +59,9 @@
     - scan
     
 
-- name: Failing the playbook scinc app name  does not exist
+- name: Failing the playbook since app name  does not exist
   fail:
-    msg: Failing the playbook scince {{item}} does not exist.
+    msg: Failing the playbook since {{item}} does not exist.
   when: item not in app_name_list
   with_items:
     - "{{cr_restore_cs_app_name}}"

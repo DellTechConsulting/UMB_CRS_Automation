@@ -43,38 +43,38 @@
     - analysisstatus
 
 - debug:
-    msg: "Copy is good we can recover and restore it"
+    msg: "Copies are good, and we can recover and restore them."
   when:
     - results_Createpolicy.json.lastAnalysisStatus == "Good"
   tags:
     - analysisstatus
     
-- name: Failing the playbook scinc copy is not good
+- name: Failing the playbook since copy is not good
   fail:
-    msg: Failing the playbook scince copy is not good.
+    msg: Failing the playbook since copy is not good.
   when: results_Createpolicy.json.lastAnalysisStatus != "Good"
   tags:
     - analysisstatus
 
-- name: analysis report
-  uri:
-    validate_certs: no
-    force_basic_auth: yes
-    url: "{{ crrest_base_url }}/copies/63956f0394422f0001606d8b/analysisreports"
-    method: POST
-    headers:
-          Content-Type: application/json
-          Accept: application/json
-          X-CR-AUTH-TOKEN: "{{ crrest_token}}"
-    body_format: json
-    status_code: 200
-    body:
-      {
-        "List_of_email_addresses": [
-          "cyberrecovery@dell.com"
-        ]
-      }
-  register: results_Createpolicy
-  changed_when: true
-  tags:
-    - mail
+# - name: analysis report
+#   uri:
+#     validate_certs: no
+#     force_basic_auth: yes
+#     url: "{{ crrest_base_url }}/copies/{{cr_restore_copy_source_id1}}/analysisreports"
+#     method: POST
+#     headers:
+#           Content-Type: application/json
+#           Accept: application/json
+#           X-CR-AUTH-TOKEN: "{{ crrest_token}}"
+#     body_format: json
+#     status_code: 200
+#     body:
+#       {
+#         "List_of_email_addresses": [
+#           "cyberrecovery@dell.com"
+#         ]
+#       }
+#   register: results_Createpolicy
+#   changed_when: true
+#   tags:
+#     - mail

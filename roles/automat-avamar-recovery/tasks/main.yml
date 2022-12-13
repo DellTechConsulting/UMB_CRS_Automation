@@ -4,8 +4,6 @@
   tags:
     - add
 
-# #   # tags:
-#   #   - check
 - name:  Get the point in time copy of the policy
   include_tasks: copy_id.yml
   vars:  
