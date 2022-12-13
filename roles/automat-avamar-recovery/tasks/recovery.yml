@@ -49,7 +49,7 @@
           - fail
           - recover
 
-      - name: Failing the playbook scinc sandbox not exist
+      - name: Failing the playbook since sandbox exist
         when: (crrest_sandbox_info.json['items'] | length) != 0
         fail:
           msg: "sandbox exist for this policy we can not create sandbox and recover"
@@ -206,7 +206,7 @@
           - recover
 
       - pause:
-          minutes: 5
+          minutes: "{{pause_time}}"
         tags:
           - recover
       - name: login

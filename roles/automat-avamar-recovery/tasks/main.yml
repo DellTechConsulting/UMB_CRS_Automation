@@ -4,8 +4,6 @@
   tags:
     - add
 
-# #   # tags:
-#   #   - check
 - name:  Get the point in time copy of the policy
   include_tasks: copy_id.yml
   vars:  
@@ -15,49 +13,6 @@
     loop_var: outer_item
   tags:
     - get
-
-- name:  Analyze the copy using cyber sense
-  include_tasks: copy_scan1.yml
-  vars:  
-    id1: "{{item.0}}"
-    cr_restore_copy_source_id1: "{{item.1}}"
-  with_together:
-    - "{{id}}"
-    - "{{cr_restore_copy_source_id}}" 
-  tags:
-    - scan
-
-
-- name: checking the analyze status of the copy
-  include_tasks: copy_scan_status_check1.yml
-  vars:  
-    id1: "{{ item.0 }}"
-    jid1: "{{ item.1 }}"
-  with_together:
-    - "{{id}}"
-    - "{{jid}}" 
-  tags:
-    - scanstatus
-
-- name: Get the analysis details of the copy (good/partial)
-  include_tasks: analyze_details1.yml
-  vars:  
-    id1: "{{item.0}}"
-    cr_restore_copy_source_id1: "{{item.1}}"
-  with_together:
-    - "{{id}}"
-    - "{{cr_restore_copy_source_id}}" 
-  tags:
-    - analysisstatus
-    
-# - name: Delete the copy 
-#   include_tasks: recovery1.yml
-#   vars:  
-#     id1: "{{item.0}}"
-#     sandbox_id1: "{{item.1}}"
-#   with_together:
-#     - "{{id}}"
-#     - "{{sandbox_id}}" 
 
 - name: recover the copy 
   include_tasks: recovery1.yml
