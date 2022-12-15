@@ -48,17 +48,17 @@
     - analysisstatus
     
 
-- name: delete the copy 
-  include_tasks: delete1.yml
-  vars:  
-    id1: "{{item.0}}"
-    cr_restore_copy_source_id1: "{{item.1}}"
-  with_together:
-    - "{{id}}"
-    - "{{cr_restore_copy_source_id}}" 
-  tags:
-    - delete
-    - fail
+# - name: delete the copy 
+#   include_tasks: delete1.yml
+#   vars:  
+#     id1: "{{item.0}}"
+#     cr_restore_copy_source_id1: "{{item.1}}"
+#   with_together:
+#     - "{{id}}"
+#     - "{{cr_restore_copy_source_id}}" 
+#   tags:
+#     - delete
+#     - fail
 
 - name: recover the copy 
   include_tasks: recovery1.yml
