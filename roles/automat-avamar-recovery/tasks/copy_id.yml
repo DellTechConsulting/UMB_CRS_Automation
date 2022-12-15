@@ -36,7 +36,12 @@
 - debug:
     msg: "{{crrest_copies_info}}"
   tags:
-    - get
+    - 
+    
+- name: Fail if no copies were found
+  when: (crrest_copies_info.json['items'] | length) == 0
+  fail:
+    msg: "There were no copies for policy id {{ cr_policy_id }}"
 
 
 - name: Get latest copy
