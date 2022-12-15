@@ -54,7 +54,7 @@
 
 - name: printing app name exist
   debug: 
-    msg: "allpication {{ cr_s_app_name}} exist"
+    msg: "allpication {{ cr_cs_app_name}} exist"
   tags:
     - scan
     
