@@ -25,7 +25,6 @@
   tags:
     - scan
 
-
 - name: checking the analyze status of the copy
   include_tasks: copy_scan_status_check1.yml
   vars:  
@@ -48,14 +47,18 @@
   tags:
     - analysisstatus
     
-# - name: Delete the copy 
-#   include_tasks: recovery1.yml
-#   vars:  
-#     id1: "{{item.0}}"
-#     sandbox_id1: "{{item.1}}"
-#   with_together:
-#     - "{{id}}"
-#     - "{{sandbox_id}}" 
+
+- name: delete the copy 
+  include_tasks: delete1.yml
+  vars:  
+    id1: "{{item.0}}"
+    cr_restore_copy_source_id1: "{{item.1}}"
+  with_together:
+    - "{{id}}"
+    - "{{cr_restore_copy_source_id}}" 
+  tags:
+    - delete
+    - fail
 
 - name: recover the copy 
   include_tasks: recovery1.yml
@@ -66,7 +69,8 @@
     - "{{id}}"
     - "{{cr_restore_copy_source_id}}" 
   tags:
-    - check
-    - delete
-    - fail
     - recover
+
+    
+
+

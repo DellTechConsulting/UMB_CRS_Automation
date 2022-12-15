@@ -1,7 +1,7 @@
 ---
 - name: login
   uri:
-    url: "{{crrest_base_url}}/login"
+    url: "{{cr_url}}/login"
     validate_certs: "{{crrest_verify_certs}}"
     method: POST
     body_format: json
@@ -22,7 +22,7 @@
 
 - name: Get Copies
   uri:
-    url: "{{ crrest_base_url }}/policies/{{id1}}/copies"
+    url: "{{ cr_url }}/policies/{{id1}}/copies"
     validate_certs: "{{ crrest_verify_certs }}"
     method: GET
     body_format: json

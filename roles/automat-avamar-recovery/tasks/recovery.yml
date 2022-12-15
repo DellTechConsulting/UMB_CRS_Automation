@@ -2,7 +2,7 @@
 #### Cyber Recovery Login Setup
       - name: login
         uri:
-          url: "{{crrest_base_url}}/login"
+          url: "{{cr_url}}/login"
           validate_certs: "{{crrest_verify_certs}}"
           method: POST
           body_format: json
@@ -11,7 +11,7 @@
             password: "{{crrest_password}}"
         register: crrest_login_info
         tags:
-          - check
+          - recover
 #        no_log: "crrest_secure_logging"
 
       - name: Set Login Token
@@ -19,12 +19,12 @@
           crrest_token: "{{crrest_login_info.json.accessToken}}"
           crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
         tags:
-          - check
+          - recover
 
       ################# Checking for Existing Sandbox
       - name: Check if Sandbox Exists
         uri:
-          url: "{{ crrest_base_url }}/policies/{{id1}}/sandboxes"
+          url: "{{ cr_url }}/policies/{{id1}}/sandboxes"
           validate_certs: "{{ crrest_verify_certs }}"
           method: GET
           headers:
@@ -32,99 +32,45 @@
                 Accept: application/json
         register: crrest_sandbox_info
         tags:
-          - check
+          - recover
+
+      - name: Fetching the sandbox id  from the sandbox details 
+        set_fact:
+          pol_id: "{{pol_id + [item.policyID]}}"
+        with_items: "{{ crrest_sandbox_info | json_query('json.items[*]')}}"
+        tags:
+          - recover
+
+      - debug: 
+          msg: "{{pol_id}}"
+        tags:
+          - recover
+
       
       - name: Fetching the sandbox id  from the sandbox details 
         set_fact:
           sandbox_id: "{{sandbox_id + [item.id]}}"
         with_items: "{{ crrest_sandbox_info | json_query('json.items[*]')}}"
         tags:
-          - check
+          - recover
 
       - debug: 
           msg: "{{sandbox_id}}"
         tags:
-          - check
-          - delete
-          - fail
           - recover
-
-      - name: Failing the playbook since sandbox exist
-        when: (crrest_sandbox_info.json['items'] | length) != 0
-        fail:
-          msg: "sandbox exist for this policy we can not create sandbox and recover"
-        tags:
-          - fail
 
       - name: printing sandbox exist
         debug: 
           msg: "There were no sandbox found"
         when: (crrest_sandbox_info.json['items'] | length) == 0
         tags:
-          - check
-
-      # - name: Delete Sandbox
-      #   uri:
-      #    url: "{{ crrest_base_url }}/policies/{{ id1 }}/sandboxes/{{ sandbox_id1 }}"
-      #    validate_certs: "{{ crrest_verify_certs }}"
-      #    method: DELETE
-      #    headers:
-      #       X-CR-AUTH-TOKEN: "{{ crrest_token }}"
-      #       Accept: application/json
-      #   register: crrest_sandbox_delete
-     
-      #   tags: 
-      #     - delete
-
-      # # Pause for 1 minutes to get the job status.
-      # - pause:
-      #     minutes: 1
-      #   tags:
-      #     - delete
-      # - name: login
-      #   uri:
-      #     url: "{{crrest_base_url}}/login"
-      #     validate_certs: "{{crrest_verify_certs}}"
-      #     method: POST
-      #     body_format: json
-      #     body:
-      #       username: "{{crrest_username}}"
-      #       password: "{{crrest_password}}"
-      #   register: crrest_login_info
-      #   tags:
-      #     - check
-      # - name: Set Login Token
-      #   set_fact:
-      #     crrest_token: "{{crrest_login_info.json.accessToken}}"
-      #     crrest_refresh_token: "{{crrest_login_info.json.refreshToken}}"
-      #   tags:
-      #     - check
-
-      # - name: Check Sandbox status 
-      #   uri:
-      #     url: "{{ crrest_base_url }}/policies/{{id1}}/sandboxes"
-      #     validate_certs: "{{ crrest_verify_certs }}"
-      #     method: GET
-      #     headers:
-      #           X-CR-AUTH-TOKEN: "{{ crrest_token }}"
-      #           Accept: application/json
-      #   register: crrest_sandbox_info
-      
-      #   tags:
-      #     - delete
-      # - name: printing sandbox exist
-      #   debug: 
-      #     msg: "There were no sandbox found, deleteted successfully"
-      #   when: (crrest_sandbox_info.json['items'] | length) == 0
-      #   tags:
-      #     - delete
-      
+          - recover
       
       - name: Get all CR application details
         uri:
           validate_certs: "{{crrest_verify_certs}}"
           force_basic_auth: yes
-          url: "{{crrest_base_url}}/apps"
+          url: "{{cr_url}}/apps"
           method: GET
           headers:
             Content-Type: application/json
@@ -150,24 +96,24 @@
 
       - name: printing app name exist
         debug: 
-          msg: "allpication {{ cr_restore_AVE_app_name}} exist"
+          msg: "allpication {{ cr_AVE_app_name}} exist"
         tags:
           - recover
 
-      - name: Failing the playbook scinc app name  does not exist
+      - name: Failing the playbook since app name does not exist
         fail:
           msg: Failing the playbook scince {{item}} does not exist.
         when: item not in app_name_list
         with_items:
-          - "{{cr_restore_AVE_app_name}}"
+          - "{{cr_AVE_app_name}}"
         tags:
           - recover
              
-      - name: Map the CS app name with app id 
+      - name: Map the AVE app name with app id 
         set_fact: 
           app_id: "{{ item.id }}"
         when: 
-          - item.nickname in cr_restore_AVE_app_name
+          - item.nickname in cr_AVE_app_name
         with_items: 
           - "{{ app_details | json_query('json.items[*]')}}"
         tags:
@@ -187,7 +133,7 @@
         uri:
           validate_certs: no
           force_basic_auth: yes
-          url: "{{ crrest_base_url }}/actions/recoverapp"
+          url: "{{ cr_url }}/actions/recoverapp"
           method: POST
           headers:
                 Content-Type: application/json
@@ -211,7 +157,7 @@
           - recover
       - name: login
         uri:
-          url: "{{crrest_base_url}}/login"
+          url: "{{cr_url}}/login"
           validate_certs: "{{crrest_verify_certs}}"
           method: POST
           body_format: json
@@ -230,7 +176,7 @@
 
       - name: Check Sandbox status 
         uri:
-          url: "{{ crrest_base_url }}/policies/{{id1}}/sandboxes"
+          url: "{{ cr_url }}/policies/{{id1}}/sandboxes"
           validate_certs: "{{ crrest_verify_certs }}"
           method: GET
           headers:
@@ -239,7 +185,8 @@
         register: crrest_sandbox_info
         tags:
           - recover
-      - name: Fetching the policy names from the policy details 
+          
+      - name: Fetching the copy id  from the sandbox details 
         set_fact:
            cr_id1: "{{ cr_id1 + [item.copyid]}}"
         with_items: "{{ crrest_sandbox_info | json_query('json.items[*]')}}"
@@ -248,29 +195,7 @@
                   
       - name: printing sandbox exist
         debug: 
-          msg: "The sanbox created and recovered the copy  {{cr_id1}}successfully"
+          msg: "The sanbox created and recovered the copy  {{cr_id1}}successfully."
         when: (crrest_sandbox_info.json['items'] | length) != 0
         tags:
           - recover
-
-      # - name: analysis report
-      #   uri:
-      #     validate_certs: no
-      #     force_basic_auth: yes
-      #     url: "{{ crrest_base_url }}/copies/63956f0394422f0001606d8b/analysisreports"
-      #     method: POST
-      #     headers:
-      #           Content-Type: application/json
-      #           Accept: application/json
-      #           X-CR-AUTH-TOKEN: "{{ crrest_token}}"
-      #     body_format: json
-      #     status_code: 200
-      #     body:
-      #       {
-      #         "List_of_email_addresses": [
-      #           "cyberrecovery@dell.com"
-      #         ]
-      #       }
-      #   register: results_Createpolicy
-      #   changed_when: true
-  

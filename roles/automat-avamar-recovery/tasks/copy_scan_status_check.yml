@@ -5,7 +5,7 @@
     - name: Get CRS API authentication token
       uri:
         validate_certs: "{{crrest_verify_certs}}"
-        url: "{{crrest_base_url}}/login"
+        url: "{{cr_url}}/login"
         method: POST
         headers:
           Content-Type: application/json
@@ -31,7 +31,7 @@
       uri:
         validate_certs: no
         force_basic_auth: yes
-        url: "{{crrest_base_url}}/policies/{{id1}}/jobs/{{jid1}}"    
+        url: "{{cr_url}}/policies/{{id1}}/jobs/{{jid1}}"    
         method: GET
         headers:
               Content-Type: application/json

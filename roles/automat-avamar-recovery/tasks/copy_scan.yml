@@ -4,7 +4,7 @@
 - name: Get CRS API authentication token
   uri:
     validate_certs: "{{crrest_verify_certs}}"
-    url: "{{crrest_base_url}}/login"
+    url: "{{cr_url}}/login"
     method: POST
     headers:
       Content-Type: application/json
@@ -29,7 +29,7 @@
   uri:
     validate_certs: "{{crrest_verify_certs}}"
     force_basic_auth: yes
-    url: "{{crrest_base_url}}/apps"
+    url: "{{cr_url}}/apps"
     method: GET
     headers:
         Content-Type: application/json
@@ -54,7 +54,7 @@
 
 - name: printing app name exist
   debug: 
-    msg: "allpication {{ cr_restore_cs_app_name}} exist"
+    msg: "allpication {{ cr_s_app_name}} exist"
   tags:
     - scan
     
@@ -64,7 +64,8 @@
     msg: Failing the playbook since {{item}} does not exist.
   when: item not in app_name_list
   with_items:
-    - "{{cr_restore_cs_app_name}}"
+    - "{{cr_cs_app_name}}"
+
   tags:
     - scan
        
@@ -72,7 +73,7 @@
   set_fact: 
     cs_app_id: "{{ item.id }}"
   when: 
-    - item.nickname in cr_restore_cs_app_name
+    - item.nickname in cr_cs_app_name
   with_items: 
     - "{{ app_details | json_query('json.items[*]')}}"
   tags:
@@ -93,7 +94,7 @@
   uri:
     validate_certs: "{{crrest_verify_certs}}"
     force_basic_auth: yes
-    url: "{{ crrest_base_url }}/policies/{{id1}}/copies/{{cr_restore_copy_source_id1}}/analyze"
+    url: "{{ cr_url }}/policies/{{id1}}/copies/{{cr_restore_copy_source_id1}}/analyze"
     method: POST
     headers:
           Content-Type: application/json
