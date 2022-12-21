@@ -1,8 +1,8 @@
 ---
-# cr_policy_name: ['CRS_Test','CNWLinux1','AVE','Test_New'] 
-# cr_cs_app_name: CS
+cr_policy_name: ['CRS_Test','CNWLinux1','AVE','Test_New'] 
+cr_cs_app_name: CS
 # cr_AVE_app_name: AVE
-# pause_time: 10
+pause_time: 10
 
 crrest_secure_logging: true
 crrest_verify_certs: false
