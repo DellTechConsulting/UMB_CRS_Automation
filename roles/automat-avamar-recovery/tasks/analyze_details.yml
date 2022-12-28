@@ -48,13 +48,15 @@
     - results_Createpolicy.json.lastAnalysisStatus == "Good"
   tags:
     - analysisstatus
-    
+
 - name: Failing the playbook since copy is not good
   fail:
-    msg: Failing the playbook since copy is not good.
-  when: results_Createpolicy.json.lastAnalysisStatus != "Good"
+    msg: Failing the playbook since copy is not good and Infected backup set(s) found..
+  when: results_Createpolicy.json.lastAnalysisStatus == "Critical"
   tags:
     - analysisstatus
+
+
 
 # - name: analysis report
 #   uri:
