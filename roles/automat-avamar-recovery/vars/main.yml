@@ -1,7 +1,7 @@
 ---
 cr_policy_name: ['Test_New'] 
 cr_cs_app_name: CS
-# cr_AVE_app_name: AVE
+cr_AVE_app_name: AVE
 pause_time: 10
 
 crrest_secure_logging: true
