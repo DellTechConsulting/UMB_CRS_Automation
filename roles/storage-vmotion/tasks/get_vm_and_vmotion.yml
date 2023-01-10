@@ -1,0 +1,112 @@
+---
+    - name: Get VMs from vCenter
+      uri:
+        url: https://{{vcenter_server}}/api/vcenter/vm
+        force_basic_auth: yes
+        validate_certs: "{{ validate_certs }}"
+        headers:
+          Cookie: "{{ login.set_cookie }}"
+      register: vVMs
+      tags:
+        - Vmotion
+
+    - name: Fetching the vm name from the vm details 
+      set_fact:
+        vm_name_list: "{{vm_name_list + [item.name]}}"
+      with_items: "{{ vVMs | json_query('json[*]')}}"
+      tags:
+        - vmotion
+
+    - debug:
+        msg: "{{vm_name_list}}"
+      tags:
+        - vmotion
+
+    - name: printing vm name exist
+      debug: 
+        msg: "vm {{ vm_name}} exist"
+      tags:
+        - vmotion
+
+    - name: Failing the playbook since vm name does not exist
+      fail:
+        msg: Failing the playbook scince {{item}} does not exist.
+      when: item not in vm_name_list
+      with_items:
+        - "{{vm_name}}"
+      tags:
+        - vmotion
+
+    - name: Map the vm name with vm id 
+      set_fact: 
+        vm_id: "{{vm_id + [item.vm]}}"
+      when: 
+        - item.name in vm_name
+      with_items: 
+        - "{{ vVMs | json_query('json[*]')}}"
+      tags:
+        - vmotion
+
+    - debug:
+        msg: "{{vm_id}}"
+      tags:
+        - vmotion
+
+    - name: Concatenate a list to string
+      set_fact:
+        vm_id_string: "{{ vm_id | join(',') }}"
+      tags:
+        - vmotion
+
+    - name: Retrieve the disk information using the label
+      vmware.vmware_rest.vcenter_vm_hardware_disk_info:
+        vcenter_hostname:  "{{vcenter_server}}"
+        vcenter_username: "{{vcenter_user}}"
+        vcenter_password: "{{vcenter_pass}}"
+        vcenter_validate_certs: false
+        vm: "{{vm_id_string}}"
+        label: Hard disk 1
+      register: vm_info
+      tags:
+        - vmotion
+
+    - set_fact: 
+        size: "{{vm_info.value.capacity}}"
+      tags:
+        - vmotion
+
+
+    - name: size of the disk of a virtual machine on datastore
+      set_fact: 
+        size1: "{{size | int >= target_disk_space}}"
+      tags:
+        - vmotion
+
+    - debug:
+        msg: "{{size1 | int}}"
+      tags:
+        - vmotion
+
+    - debug:
+        msg: size of the disk of a virtual machine on datastore is equal/ more than 800GB, then we can perform storage vmotion.
+      when: size1 | int == 1
+      tags:
+        - vmotion
+
+    - name: Failing the playbook because size of the disk of a virtual machine on datastore is not more than 800GB
+      fail:
+        msg: Failing the playbook because size of the disk of a virtual machine on datastore is not more than 800GB
+      when: size1 | int == 0
+      tags:
+       - vmotion
+
+    - name: Perform vMotion of virtual machine
+      vmware_vmotion:
+        hostname: "{{vcenter_server}}"
+        username: "{{vcenter_user}}"
+        password: "{{vcenter_pass}}"
+        validate_certs: False
+        vm_name: "{{vm_name}}"
+        destination_datastore: "{{destination_datastore}}"
+      tags:
+        - vmotion

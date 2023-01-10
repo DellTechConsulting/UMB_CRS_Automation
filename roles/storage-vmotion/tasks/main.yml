@@ -1,0 +1,10 @@
+---
+- name: Login into vCenter 
+  include_tasks: login.yml
+  tags:
+    - login
+
+- name:  get vms and perform storage vmotion
+  include_tasks: get_vm_and_vmotion.yml
+  tags:
+    - vmotion
